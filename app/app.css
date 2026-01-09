@@ -13,3 +13,12 @@ body {
     color-scheme: dark;
   }
 }
+
+/* สำหรับปุ่ม sing in, logout */
+.btn-auth {
+  border-radius: 20px;
+  background: linear-gradient(270deg, #0016D8 0%, #0010A5 50%, #000B72 100%);
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  color: white; /* Added for better visibility on dark background */
+  padding: 10px 20px; /* Optional: common padding for buttons */
+}
