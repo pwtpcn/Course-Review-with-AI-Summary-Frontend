@@ -23,7 +23,7 @@ export const action: ActionFunction = async ({ request }) => {
   return actionMessage;
 };
 
-export default function Login() {
+export default function signup() {
   const fetcher = useFetcher<ActionMessage>();
   return (
     <div className="bg-[#000000] h-screen flex flex-col justify-center items-center overflow-auto">
@@ -31,7 +31,7 @@ export default function Login() {
         method="post"
         className="flex flex-col justify-center items-center w-fit h-fit space-y-4 p-10 rounded-2xl "
       >
-        <div className="text-[#FCFC00] text-[48px] font-['Press_Start_2P'] uppercase">Login</div>
+        <div className="text-[#FCFC00] text-[48px] font-['Press_Start_2P'] uppercase">Sign up</div>
         <input
           type="text"
           name="email"
@@ -39,9 +39,21 @@ export default function Login() {
           className="border-[#0016D8] border-2 rounded-2xl p-2 w-200 text-[#FFFFFF]"
         />
         <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          className="border-[#0016D8] border-2 rounded-2xl p-2 w-200 text-[#FFFFFF]"
+        />
+        <input
           type="password"
           name="password"
           placeholder="Password"
+          className="border-[#0016D8] border-2 rounded-2xl p-2 w-200 text-[#FFFFFF]"
+        />
+        <input
+          type="password"
+          name="confirm-password"
+          placeholder="Confirm Password"
           className="border-[#0016D8] border-2 rounded-2xl p-2 w-200 text-[#FFFFFF]"
         />
         <div className="flex justify-between w-full">
@@ -54,13 +66,13 @@ export default function Login() {
             Back
           </button>
         </NavLink>
-        <NavLink to="/review">
+        <NavLink to="/login">
           <button
             type="submit"
-            name="enter"
+            name="save"
             className="border-[#0016D8] border-2 rounded-xl p-2 w-25 h-10 text-[#FFFFFF] text-[12px] font-['Press_Start_2P'] uppercase hover:bg-[#0016D8]"
           >
-            Enter
+            Save
           </button>
         </NavLink>
         </div>

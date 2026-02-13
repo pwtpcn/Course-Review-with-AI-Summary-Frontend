@@ -16,8 +16,14 @@ const SubjectCard = ({ color = "green" }: { color?: "red" | "green" }) => {
   };
 
   return (
-    <div className={`h-48 w-full border ${borderStyles[color]} bg-black p-4 text-[#FCFC00] text-xs rounded opacity-80 hover:opacity-100 transition-opacity duration-300`}>
-      Subject :
+    <div className={`h-auto min-h-48 w-full border ${borderStyles[color]} bg-black p-4 text-[#FCFC00] text-xs rounded opacity-80 hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2`}>
+      <p>Subject : </p>
+      <p>Content : </p>
+      <p>Hard level : </p>
+      <p>How to prepare : </p>
+      <p>For jobs : </p>
+      <p>Pros. : </p>
+      <p>Cons. : </p>
     </div>
   );
 };

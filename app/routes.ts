@@ -6,6 +6,7 @@ export default [
 
     //Overall
     route("/login", "routes/login.tsx"),
+    route("/signup", "routes/signup.tsx"),
     route("/jobs", "routes/jobs.tsx"),
 
     //Review

@@ -15,14 +15,26 @@ body {
 }
 
 /* สำหรับปุ่ม sing in, logout */
-.btn-auth {
+.btn-auth-login {
   border-radius: 20px;
   background: linear-gradient(270deg, #0016D8 0%, #0010A5 50%, #000B72 100%);
   transition: all 0.2s ease-in-out;
 }
 
-.btn-auth:hover {
+.btn-auth-signup {
+  border-radius: 20px;
+  background: linear-gradient(270deg, #A9A9A9 50%, #767676 100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-auth-login:hover {
   background: white;
   color: #0016D8;
+  border: 1px solid #0016D8;
+}
+
+.btn-auth-signup:hover {
+  background: white;
+  color:   #0016D8;
   border: 1px solid #0016D8;
 }
