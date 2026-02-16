@@ -1,6 +1,8 @@
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
+export interface User {
+  id: string; // Metadata
+  username: string;
+  email: string;
+  role: "user" | "admin";
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -9,6 +9,8 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import type { User } from "./routes/models/User";
+import { UserRepository } from "./routes/repositories/UserRepositories";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -41,7 +43,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
+export async function loader({ request }: Route.LoaderArgs) {
+  const cookieHeader = request.headers.get("Cookie");
+  // console.log("Cookie Header:", cookieHeader);
+  let user: User | null = null;
+
+  if (cookieHeader) {
+    const cookies = Object.fromEntries(
+      cookieHeader.split("; ").map((c) => {
+        const [key, ...v] = c.split("=");
+        return [key, v.join("=")];
+      }),
+    );
+    // console.log("Cookies:", cookies);
+    const accessToken = cookies["access_token"];
+
+    if (accessToken) {
+      user = await UserRepository.getUser(accessToken);
+    }
+  }
+
+  return { user };
+}
+
+export default function App({ loaderData }: Route.ComponentProps) {
   return <Outlet />;
 }
 
