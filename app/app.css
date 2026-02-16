@@ -38,3 +38,44 @@ body {
   color:   #0016D8;
   border: 1px solid #0016D8;
 }
+
+.btn-auth-write-review {
+  border-radius: 20px;
+  background: linear-gradient(270deg, #0016D8 0%, #0010A5 50%, #000B72 100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-auth-write-review:hover {
+  background: white;
+  color: #0016D8;
+  border: 1px solid #0016D8;
+}
+
+.btn-ai-summarize-cards {
+  background: linear-gradient(270deg, #0016D8 0%, #0010A5 50%, #000B72 100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-cancel-review {
+  border-radius: 20px;
+  border: 1px solid #D80004;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-cancel-review:hover {
+  background: white;
+  color: #D80004;
+  border: 1px solid #D80004;
+}
+
+.btn-submit-review {
+  border-radius: 20px;
+  border: 1px solid #0016D8;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-submit-review:hover {
+  background: white;
+  color: #0016D8;
+  border: 1px solid #0016D8;
+}
