@@ -9,14 +9,11 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 // Subject Card Component with Neon Borders
-const SubjectCard = ({ color = "green" }: { color?: "red" | "green" }) => {
-  const borderStyles = {
-    green: "border-[#33E331] shadow-[0_0_2px_#33E331]",
-    red: "border-[#D80004] shadow-[0_0_2px_#D80004]"
-  };
+const SubjectCard = () => {
+  const borderStyle = "border-[#1BE1F3] shadow-[0_0_2px_#1BE1F3]";
 
   return (
-    <div className={`h-auto min-h-48 w-full border ${borderStyles[color]} bg-black p-4 text-[#FCFC00] text-xs rounded opacity-80 hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2`}>
+    <div className={`h-auto min-h-48 w-full border ${borderStyle} bg-black p-4 text-[#FCFC00] text-xs rounded opacity-80 hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2`}>
       <p>Subject : </p>
       <p>Content : </p>
       <p>Hard level : </p>
@@ -39,15 +36,15 @@ export default function Home() {
       <div className="flex-1 p-4 md:p-8 overflow-hidden z-10 opacity-50 blur-[1px]">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto h-full">
           {/* Static grid for background effect as per design */}
-          <SubjectCard color="green" />
-          <SubjectCard color="red" />
-          <SubjectCard color="green" />
-          <SubjectCard color="red" />
-          <SubjectCard color="green" />
-          <SubjectCard color="red" />
-          <SubjectCard color="green" />
-          <SubjectCard color="red" />
-          <SubjectCard color="green" />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
+          <SubjectCard />
         </div>
       </div>
 
