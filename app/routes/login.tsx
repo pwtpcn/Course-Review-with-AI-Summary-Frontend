@@ -91,7 +91,7 @@ export default function Login() {
         <div className="flex justify-between w-full">
           <NavLink to="/">
             <button
-              type="button" // Changed to button to prevent form submission logic on Back
+              type="button"
               name="back"
               className="border-[#D80004] border-2 rounded-xl p-2 w-25 h-10 text-[#FFFFFF] text-[12px] font-['Press_Start_2P'] uppercase hover:bg-[#D80004]"
             >
