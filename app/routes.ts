@@ -12,8 +12,8 @@ export default [
 
   //Review
   route("/review", "routes/review/review.tsx"),
-  route("/review/subjectreview", "routes/review/subjectreview.tsx"),
-  route("/review/writereview", "routes/review/writereview.tsx"),
+  route("/review/subjectReview", "routes/review/subjectReview.tsx"),
+  route("/review/writeReview", "routes/review/writeReview.tsx"),
 
   //User
   // route("userpage1", "routes/user/userpage1.tsx"),
