@@ -12,8 +12,11 @@ export default [
 
   //Review
   route("/review", "routes/review/review.tsx"),
-  route("/review/subjectReview", "routes/review/subjectReview.tsx"),
+  route("/review/subjectReview/:courseId", "routes/review/subjectReview.tsx"),
   route("/review/writeReview", "routes/review/writeReview.tsx"),
+
+  //API
+  route("/api/search-courses", "routes/api/search-courses.ts"),
 
   //User
   // route("userpage1", "routes/user/userpage1.tsx"),
