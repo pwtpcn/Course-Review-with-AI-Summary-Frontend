@@ -1,22 +1,40 @@
-FROM node:20-alpine AS development-dependencies-env
-COPY . /app
+# Base image
+FROM node:20-alpine AS base
+
+# 1. Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
+
+# Install dependencies based on the preferred package manager
+COPY package.json package-lock.json ./
 RUN npm ci
 
-FROM node:20-alpine AS production-dependencies-env
-COPY ./package.json package-lock.json /app/
+# 2. Rebuild the source code only when needed
+FROM base AS builder
 WORKDIR /app
-RUN npm ci --omit=dev
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 
-FROM node:20-alpine AS build-env
-COPY . /app/
-COPY --from=development-dependencies-env /app/node_modules /app/node_modules
-WORKDIR /app
+# Build the application
 RUN npm run build
 
-FROM node:20-alpine
-COPY ./package.json package-lock.json /app/
-COPY --from=production-dependencies-env /app/node_modules /app/node_modules
-COPY --from=build-env /app/build /app/build
+# 3. Production image, copy all the files and run
+FROM base AS runner
 WORKDIR /app
+
+ENV NODE_ENV production
+
+# Install only production dependencies
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+# Copy build artifacts
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/public ./public
+
+# Expose the port the app runs on
+ENV PORT=5173
+EXPOSE 5173
+
 CMD ["npm", "run", "start"]

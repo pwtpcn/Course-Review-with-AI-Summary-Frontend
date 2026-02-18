@@ -1,22 +1,26 @@
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
-    //สร้างหน้าใหม่แล้วมาเพิ่ม route ที่นี่
-    index("routes/home.tsx"),
+  //สร้างหน้าใหม่แล้วมาเพิ่ม route ที่นี่
+  index("routes/home.tsx"),
 
-    //Overall
-    route("/login", "routes/login.tsx"),
-    route("/signup", "routes/signup.tsx"),
-    route("/jobs", "routes/jobs.tsx"),
+  //Overall
+  route("/login", "routes/login.tsx"),
+  route("/signup", "routes/signup.tsx"),
+  route("/jobs", "routes/jobs.tsx"),
+  route("/logout", "routes/logout.tsx"),
 
-    //Review
-    route("/review", "routes/review/review.tsx"),
-    route("/review/subjectreview", "routes/review/subjectreview.tsx"),
-    route("/review/writereview", "routes/review/writereview.tsx"),
+  //Review
+  route("/review", "routes/review/review.tsx"),
+  route("/review/subjectReview/:courseId", "routes/review/subjectReview.tsx"),
+  route("/review/writeReview", "routes/review/writeReview.tsx"),
 
-    //User
-    // route("userpage1", "routes/user/userpage1.tsx"),
+  //API
+  route("/api/search-courses", "routes/api/search-courses.ts"),
 
-    //Admin
-    // route("adminpage1", "routes/admin/adminpage1.tsx"),
+  //User
+  // route("userpage1", "routes/user/userpage1.tsx"),
+
+  //Admin
+  // route("adminpage1", "routes/admin/adminpage1.tsx"),
 ] satisfies RouteConfig;
