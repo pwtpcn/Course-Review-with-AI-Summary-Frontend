@@ -13,7 +13,7 @@ export default [
   //Review
   route("/review", "routes/review/review.tsx"),
   route("/review/subjectReview/:courseId", "routes/review/subjectReview.tsx"),
-  route("/review/writeReview", "routes/review/writeReview.tsx"),
+  route("/review/writeReview/:courseId", "routes/review/writeReview.tsx"),
 
   //API
   route("/api/search-courses", "routes/api/search-courses.ts"),

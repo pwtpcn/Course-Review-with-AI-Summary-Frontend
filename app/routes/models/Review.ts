@@ -19,3 +19,12 @@ export interface Review {
   user?: User;
   course?: Course;
 }
+
+export interface CreateReview{
+  courseId: string;
+  content: string;
+  pros: string;
+  cons?: string;
+  rating: number;
+  testPrepare?: string;
+}
