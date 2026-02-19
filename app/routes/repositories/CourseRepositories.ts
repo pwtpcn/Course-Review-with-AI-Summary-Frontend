@@ -36,6 +36,7 @@ export class CourseRepositories {
         `${BACKEND_URL}/course/getall?${queryParams.toString()}`,
       );
       if (!res.ok) {
+        console.error(`Failed to fetch courses: ${res.status} ${res.statusText}`);
         throw new Error("Failed to fetch courses");
       }
       const data = await res.json();

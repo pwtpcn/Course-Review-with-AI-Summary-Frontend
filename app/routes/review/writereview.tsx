@@ -1,6 +1,6 @@
 import type { ActionFunction } from "react-router";
-import { NavLink, useFetcher } from "react-router";
-import { useState } from "react";
+import { NavLink, useFetcher, useNavigate } from "react-router";
+import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 
 interface ActionMessage {
@@ -18,7 +18,14 @@ export const action: ActionFunction = async ({ request }) => {
 export default function WriteReview() {
     const fetcher = useFetcher<ActionMessage>();
     const [rating, setRating] = useState(0);
-    const [showConfirm, setShowConfirm] = useState(false);
+    const [showRecheckedConfirm, setShowRecheckedConfirm] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (fetcher.state === "idle" && fetcher.data?.message === "Review submitted") {
+            navigate("/review/subjectReview/01418490", { state: { reviewSubmitted: true } });
+        }
+    }, [fetcher.state, fetcher.data, navigate]);
 
     return (
         <div className="min-h-screen bg-black text-white font-['Press_Start_2P'] flex flex-col items-center py-12 px-4 relative">
@@ -28,7 +35,7 @@ export default function WriteReview() {
                 <h1 className="text-[#FCFC00] text-xl md:text-3xl mb-4 ">
                     Write you review
                 </h1>
-                <p className="text-[#FCFC00] text-[10px] md:text-xs">
+                <p className="text-[#FCFC00] text-sm md:text-base">
                     01418490 | Cooperative Education
                 </p>
             </div>
@@ -111,7 +118,7 @@ export default function WriteReview() {
 
                 {/* Buttons */}
                 <div className="flex justify-between pt-8">
-                    <NavLink to="/review/subjectreview">
+                    <NavLink to="/review/subjectReview/01418490">
                         <button
                             type="button"
                             className="btn-cancel-review btn-cancel-review:hover text-white px-8 py-3 rounded-2xl text-xs transition-colors uppercase"
@@ -122,7 +129,7 @@ export default function WriteReview() {
 
                     <button
                         type="button"
-                        onClick={() => setShowConfirm(true)}
+                        onClick={() => setShowRecheckedConfirm(true)}
                         className="btn-submit-review btn-submit-review:hover text-white px-8 py-3 rounded-2xl text-xs transition-colors uppercase"
                     >
                         Submit
@@ -130,7 +137,7 @@ export default function WriteReview() {
                 </div>
 
                 {/* Re confirm Popup */}
-                {showConfirm && (
+                {showRecheckedConfirm && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-center items-center p-4">
                         <div className="bg-[#0016D8]/90 w-full max-w-lg rounded-3xl p-12 text-center flex flex-col items-center gap-8 shadow-[0_0_20px_rgba(0,22,216,0.5)] border border-white/20">
 
@@ -147,19 +154,18 @@ export default function WriteReview() {
                             <button
                                 type="submit"
                                 className="bg-[#000B72] hover:bg-[#000B72]/80 text-white px-12 py-4 rounded-2xl text-sm transition-all transform hover:scale-105 border border-white/10 shadow-lg"
+                                disabled={fetcher.state !== "idle"}
                             >
-                                Submit
+                                {fetcher.state === "submitting" ? "Submitting..." : "Submit"}
                             </button>
                         </div>
                         {/* Click outside to close (optional, but good UX) */}
                         <div
                             className="absolute inset-0 -z-10"
-                            onClick={() => setShowConfirm(false)}
+                            onClick={() => setShowRecheckedConfirm(false)}
                         />
                     </div>
                 )}
-
-
             </fetcher.Form>
         </div>
     );
