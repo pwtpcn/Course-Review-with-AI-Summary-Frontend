@@ -20,11 +20,19 @@ export interface Review {
   course?: Course;
 }
 
-export interface CreateReview{
+export interface CreateReview {
   courseId: string;
   content: string;
   pros: string;
   cons?: string;
   rating: number;
   testPrepare?: string;
+}
+
+export interface ReviewSummary {
+  content: string;
+  pros: string[];
+  cons?: string[];
+  rating: number;
+  testPrepare?: string[];
 }

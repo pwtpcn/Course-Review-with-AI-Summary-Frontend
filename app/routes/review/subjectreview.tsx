@@ -13,6 +13,8 @@ import { ReviewRepositories } from "../repositories/ReviewRepositories";
 import { CourseSearchBar } from "~/component/CourseSearchBar";
 import { ConfirmPopup } from "~/component/ConfirmPopup";
 import type { User } from "../models/User";
+import { AIRepositories } from "../repositories/AIRepositories";
+import { AISummaryCard } from "~/component/AISummaryCard";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const courseId = params.courseId;
@@ -22,22 +24,23 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   const courseRepository = new CourseRepositories();
   const reviewRepository = new ReviewRepositories();
+  const aiRepository = new AIRepositories();
 
-  const course = await courseRepository.GetCourseById(courseId);
-  const reviews = await reviewRepository.GetReviewByCourseId(
-    courseId,
-    "newest",
-  );
+  const [course, reviews, aiSummary] = await Promise.all([
+    courseRepository.GetCourseById(courseId),
+    reviewRepository.GetReviewByCourseId(courseId, "newest"),
+    aiRepository.GetAISummary(courseId),
+  ]);
 
   if (!course) {
     throw new Response("Course Not Found", { status: 404 });
   }
 
-  return { course, reviews: reviews || [] };
+  return { course, reviews: reviews || [], aiSummary };
 };
 
 export default function SubjectReview() {
-  const { course, reviews } = useLoaderData<typeof loader>();
+  const { course, reviews, aiSummary } = useLoaderData<typeof loader>();
   const [showConfirm, setShowConfirm] = useState(false);
   const location = useLocation();
   const rootData = useRouteLoaderData("root") as
@@ -89,59 +92,7 @@ export default function SubjectReview() {
           )}
         </div>
 
-        {/* AI Summary Card*/}
-        <div className="w-full">
-          <h2 className="text-[#FCFC00] mb-6 md:text-base text-sm">
-            Review Summarize by AI
-          </h2>
-        </div>
-        <div className="w-full mb-12 border-3 border-[#001dae] p-4 relative">
-          <div className="btn-ai-summarize-cards p-6 text-[#FCFC00] text-[10px] md:text-sm leading-loose">
-            <div className="grid gap-4">
-              <div className="text-center text-gray-400">
-                AI Summary coming soon...
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* <div className="w-full">
-          <h2 className="text-[#FCFC00] mb-6 md:text-base text-sm">
-            Review Summarize by AI
-          </h2>
-        </div>
-        <div className="w-full mb-12 border-3 border-[#001dae] p-4 relative">
-          <div className="btn-ai-summarize-cards p-6 text-[#FCFC00] text-[10px] md:text-sm leading-loose">
-            <div className="grid gap-4">
-              <div>
-                Content :{" "}
-                <span className="text-white">
-                  {subjectData.aiSummary.content}
-                </span>
-              </div>
-              <div>
-                Hard level :{" "}
-                <span className="text-white">
-                  {subjectData.aiSummary.hardLevel}
-                </span>
-              </div>
-              <div>
-                How to prepare for test ? :{" "}
-                <span className="text-white">
-                  {subjectData.aiSummary.prepare}
-                </span>
-              </div>
-              <div>
-                Pros. :{" "}
-                <span className="text-white">{subjectData.aiSummary.pros}</span>
-              </div>
-              <div>
-                Cons. :{" "}
-                <span className="text-white">{subjectData.aiSummary.cons}</span>
-              </div>
-            </div>
-          </div>
-        </div> */}
+        <AISummaryCard aiSummary={aiSummary} />
 
         {/* All Reviews Section */}
         <SubjectReviewList reviews={reviews} />
