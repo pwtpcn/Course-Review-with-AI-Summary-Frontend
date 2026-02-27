@@ -1,10 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
+  --font-chakra-petch: "Chakra Petch", sans-serif;
 
+  --color-primary: #0016d8;
+  --color-secondary: #0010a5;
+  --color-tertiary: #000b72;
+  --color-gray-light: #a9a9a9;
+  --color-gray-dark: #767676;
+  --color-danger: #d80004;
+}
 html,
 body {
   @apply bg-white dark:bg-gray-950;
@@ -17,65 +26,65 @@ body {
 /* สำหรับปุ่ม sing in, logout */
 .btn-auth-login {
   border-radius: 20px;
-  background: linear-gradient(270deg, #0016D8 0%, #0010A5 50%, #000B72 100%);
+  background: linear-gradient(270deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-tertiary) 100%);
   transition: all 0.2s ease-in-out;
 }
 
 .btn-auth-signup {
   border-radius: 20px;
-  background: linear-gradient(270deg, #A9A9A9 50%, #767676 100%);
+  background: linear-gradient(270deg, var(--color-gray-light) 50%, var(--color-gray-dark) 100%);
   transition: all 0.2s ease-in-out;
 }
 
 .btn-auth-login:hover {
   background: white;
-  color: #0016D8;
-  border: 1px solid #0016D8;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
 }
 
 .btn-auth-signup:hover {
   background: white;
-  color:   #0016D8;
-  border: 1px solid #0016D8;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
 }
 
 .btn-auth-write-review {
   border-radius: 20px;
-  background: linear-gradient(270deg, #0016D8 0%, #0010A5 50%, #000B72 100%);
+  background: linear-gradient(270deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-tertiary) 100%);
   transition: all 0.2s ease-in-out;
 }
 
 .btn-auth-write-review:hover {
   background: white;
-  color: #0016D8;
-  border: 1px solid #0016D8;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
 }
 
 .btn-ai-summarize-cards {
-  background: linear-gradient(270deg, #0016D8 0%, #0010A5 50%, #000B72 100%);
+  background: linear-gradient(270deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-tertiary) 100%);
   transition: all 0.2s ease-in-out;
 }
 
 .btn-cancel-review {
   border-radius: 20px;
-  border: 1px solid #D80004;
+  border: 1px solid var(--color-danger);
   transition: all 0.2s ease-in-out;
 }
 
 .btn-cancel-review:hover {
   background: white;
-  color: #D80004;
-  border: 1px solid #D80004;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
 }
 
 .btn-submit-review {
   border-radius: 20px;
-  border: 1px solid #0016D8;
+  border: 1px solid var(--color-primary);
   transition: all 0.2s ease-in-out;
 }
 
 .btn-submit-review:hover {
   background: white;
-  color: #0016D8;
-  border: 1px solid #0016D8;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
 }

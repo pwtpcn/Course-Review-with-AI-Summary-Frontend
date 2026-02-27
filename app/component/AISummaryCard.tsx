@@ -13,15 +13,19 @@ export function AISummaryCard({ aiSummary }: AISummaryCardProps) {
         </h2>
       </div>
       <div className="w-full mb-12 border-3 border-[#001dae] p-4 relative">
-        <div className="btn-ai-summarize-cards p-6 text-[#FCFC00] text-[10px] md:text-sm leading-loose">
+        <div className="btn-ai-summarize-cards p-6 text-[#FCFC00] text-sm sm:text-sm md:text-md lg:text-lg leading-loose font-chakra-petch ">
           {aiSummary && aiSummary.rating !== 0 ? (
             <div className="grid gap-4">
               <div>
-                Content :{" "}
+                <span className="font-['Press_Start_2P']">Content :</span>{" "}
                 <span className="text-white">{aiSummary.content}</span>
               </div>
               <div>
-                How to prepare for test ? :{" "}
+                <span className="font-['Press_Start_2P']">Hard Level :</span>{" "}
+                <span className="text-white">{aiSummary.rating}</span>
+              </div>
+              <div>
+                <span className="font-['Press_Start_2P']">How to prepare for test ? :</span>{" "}
                 <span className="text-white">
                   {aiSummary.testPrepare?.length
                     ? aiSummary.testPrepare.join(", ")
@@ -29,13 +33,13 @@ export function AISummaryCard({ aiSummary }: AISummaryCardProps) {
                 </span>
               </div>
               <div>
-                Pros. :{" "}
+                <span className="font-['Press_Start_2P']">Pros. :</span>{" "}
                 <span className="text-white">
                   {aiSummary.pros?.length ? aiSummary.pros.join(", ") : "-"}
                 </span>
               </div>
               <div>
-                Cons. :{" "}
+                <span className="font-['Press_Start_2P']">Cons. :</span>{" "}
                 <span className="text-white">
                   {aiSummary.cons?.length ? aiSummary.cons.join(", ") : "-"}
                 </span>
@@ -46,7 +50,7 @@ export function AISummaryCard({ aiSummary }: AISummaryCardProps) {
               <div className="text-4xl md:text-5xl animate-bounce [animation-duration:3s]">
                 🤖💤
               </div>
-              <div className="text-[#FCFC00] md:text-base text-sm leading-relaxed max-w-md">
+              <div className="text-[#FCFC00] md:text-base text-sm leading-relaxed max-w-md tracking-wide">
                 AI สมองตื้อ! <br />
                 ยังรวบรวมข้อมูลของวิชานี้ไม่ได้เลย... <br />
                 <span className="text-white text-[10px] md:text-xs block mt-4">
