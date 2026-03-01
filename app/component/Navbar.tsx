@@ -2,7 +2,6 @@ import { NavLink, useRouteLoaderData, useFetcher } from "react-router";
 
 export function Navbar() {
   const data = useRouteLoaderData("root");
-  console.log("Navbar - Route Data:", data);
   const user = data?.user;
   const fetcher = useFetcher();
 

@@ -14,25 +14,25 @@ export const SubjectReviewList = ({ reviews }: SubjectReviewListProps) => {
       {reviews.map((review) => (
         <div
           key={review.id}
-          className="w-full border-2 border-[#1BE1F3] p-6 text-[#FCFC00] text-[10px] md:text-xs leading-loose mb-6"
+          className="w-full border-2 border-[#1BE1F3] p-6 text-[#FCFC00] text-xs md:text-sm lg:text-md leading-loose mb-6"
         >
           <div className="grid gap-4">
             <div>
-              Content : <span className="text-white">{review.content}</span>
+              Content : <span className="text-white font-chakra-petch">{review.content}</span>
             </div>
             <div>
-              Hard level : <span className="text-white">{review.rating}</span>
+              Hard level : <span className="text-white font-chakra-petch">{review.rating}</span>
             </div>
             <div>
               How to prepare for test ? :{" "}
-              <span className="text-white">{review.testPrepare}</span>
+              <span className="text-white font-chakra-petch">{review.testPrepare}</span>
             </div>
             <div>
-              Pros. : <span className="text-white">{review.pros}</span>
+              Pros. : <span className="text-white font-chakra-petch">{review.pros}</span>
             </div>
             {review.cons && (
               <div>
-                Cons. : <span className="text-white">{review.cons}</span>
+                Cons. : <span className="text-white font-chakra-petch">{review.cons}</span>
               </div>
             )}
           </div>

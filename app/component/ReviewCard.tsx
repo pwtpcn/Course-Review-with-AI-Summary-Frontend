@@ -8,29 +8,29 @@ export const ReviewCard = ({ data }: { data: Review }) => {
   return (
     <div className="w-full max-w-4xl mx-auto mb-8 ">
       <div
-        className={`${headerBg} ${textColor} px-4 py-2 text-xs md:text-sm inline-block`}
+        className={`${headerBg} ${textColor} px-4 py-2 text-xs md:text-sm lg:text-md inline-block`}
       >
         {data.course?.id} | {data.course?.nameEn}
       </div>
       <div
-        className={`border-2 ${borderColor} p-6 bg-black text-[#FCFC00] min-h-[200px] text-[10px] md:text-xs leading-loose`}
+        className={`border-2 ${borderColor} p-6 bg-black text-[#FCFC00] min-h-[200px] text-xs md:text-sm lg:text-md leading-loose`}
       >
         <div className="grid gap-4">
           <div>
-            Content :<span className="text-white">{data.content}</span>
+            Content :<span className="text-white font-chakra-petch">{data.content}</span>
           </div>
           <div>
-            Hard level :<span className="text-white">{data.rating}</span>
+            Hard level :<span className="text-white font-chakra-petch">{data.rating}</span>
           </div>
           <div>
             How to prepare for test ? :
-            <span className="text-white">{data.testPrepare}</span>
+            <span className="text-white font-chakra-petch">{data.testPrepare}</span>
           </div>
           <div>
-            Pros. :<span className="text-white">{data.pros}</span>
+            Pros. :<span className="text-white font-chakra-petch">{data.pros}</span>
           </div>
           <div>
-            Cons. :<span className="text-white">{data.cons}</span>
+            Cons. :<span className="text-white font-chakra-petch">{data.cons}</span>
           </div>
         </div>
       </div>
