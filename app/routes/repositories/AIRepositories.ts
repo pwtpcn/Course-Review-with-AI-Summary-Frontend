@@ -3,8 +3,9 @@ import type { ReviewSummary } from "../models/Review";
 export class AIRepositories {
   async GetAISummary(courseId: string): Promise<ReviewSummary | null> {
     try {
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
       const response = await fetch(
-        `http://localhost:3000/ai/reviews/${courseId}/summary-qdrant`,
+        `${BACKEND_URL}/ai/reviews/${courseId}/summary-qdrant`,
         {
           method: "GET",
           headers: {

@@ -6,15 +6,19 @@ import {
   useLocation,
   useRouteLoaderData,
 } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { LoaderFunctionArgs } from "react-router";
+import type { ReviewSummary } from "../models/Review";
 import { CourseRepositories } from "../repositories/CourseRepositories";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
 import { CourseSearchBar } from "~/component/CourseSearchBar";
 import { ConfirmPopup } from "~/component/ConfirmPopup";
 import type { User } from "../models/User";
 import { AIRepositories } from "../repositories/AIRepositories";
-import { AISummaryCard } from "~/component/AISummaryCard";
+import {
+  AISummaryCard,
+  AISummaryCardSkeleton,
+} from "~/component/AISummaryCard";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const courseId = params.courseId;
@@ -24,29 +28,48 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   const courseRepository = new CourseRepositories();
   const reviewRepository = new ReviewRepositories();
-  const aiRepository = new AIRepositories();
 
-  const [course, reviews, aiSummary] = await Promise.all([
+  const [course, reviews] = await Promise.all([
     courseRepository.GetCourseById(courseId),
     reviewRepository.GetReviewByCourseId(courseId, "newest"),
-    aiRepository.GetAISummary(courseId),
   ]);
 
   if (!course) {
     throw new Response("Course Not Found", { status: 404 });
   }
 
-  return { course, reviews: reviews || [], aiSummary };
+  return { course, reviews: reviews || [] };
 };
 
 export default function SubjectReview() {
-  const { course, reviews, aiSummary } = useLoaderData<typeof loader>();
+  const { course, reviews } = useLoaderData<typeof loader>();
+  const [aiSummary, setAiSummary] = useState<ReviewSummary | null | undefined>(
+    undefined,
+  );
+  const aiSummaryFetched = useRef<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const location = useLocation();
   const rootData = useRouteLoaderData("root") as
     | { user: User | null }
     | undefined;
   const user = rootData?.user;
+
+  useEffect(() => {
+    if (aiSummaryFetched.current === course.id) return;
+    aiSummaryFetched.current = course.id;
+
+    const aiRepository = new AIRepositories();
+
+    aiRepository
+      .GetAISummary(course.id)
+      .then((summary) => {
+        setAiSummary(summary);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch AI summary in useEffect:", error);
+        setAiSummary(null);
+      });
+  }, [course.id]);
 
   useEffect(() => {
     if (location.state?.reviewSubmitted) {
@@ -68,7 +91,7 @@ export default function SubjectReview() {
           <h1 className="text-sm md:text-base mb-4 leading-relaxed">
             {course.id} | {course.nameEn}
           </h1>
-          <p className="text-xs md:text-sm mb-6">
+          <p className="text-xs md:text-sm mb-6 font-chakra-petch">
             {course.description || "No description available."}
           </p>
 
@@ -92,7 +115,11 @@ export default function SubjectReview() {
           )}
         </div>
 
-        <AISummaryCard aiSummary={aiSummary} />
+        {aiSummary === undefined ? (
+          <AISummaryCardSkeleton />
+        ) : (
+          <AISummaryCard aiSummary={aiSummary} />
+        )}
 
         {/* All Reviews Section */}
         <SubjectReviewList reviews={reviews} />
