@@ -33,6 +33,24 @@ export const ReviewCard = ({ data }: { data: Review }) => {
             Cons. :<span className="text-white font-chakra-petch">{data.cons}</span>
           </div>
         </div>
+        <div className="mt-6 flex justify-end">
+          <button
+            className="text-red-500 hover:text-red-400 text-xs md:text-sm flex items-center gap-1 transition-colors cursor-pointer"
+            onClick={() => {
+              if (window.confirm("คุณต้องการรายงานรีวิวนี้ว่าไม่เหมาะสมใช่หรือไม่?")) {
+                alert("รายงานรีวิวเรียบร้อยแล้ว");
+              }
+            }}
+            title="รายงานรีวิวไม่เหมาะสม"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+              <path d="M12 9v4" />
+              <path d="M12 17h.01" />
+            </svg>
+            Report
+          </button>
+        </div>
       </div>
     </div>
   );

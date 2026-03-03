@@ -9,6 +9,7 @@ export default [
   route("/signup", "routes/signup.tsx"),
   route("/jobs", "routes/jobs.tsx"),
   route("/logout", "routes/logout.tsx"),
+  route("/course", "routes/review/course.tsx"),
 
   //Review
   route("/review", "routes/review/review.tsx"),
