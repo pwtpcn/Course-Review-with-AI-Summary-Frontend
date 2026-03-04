@@ -114,6 +114,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     };
   }
 
+  const courseRepo = new CourseRepositories();
+  await courseRepo.RecalculateCourseRating(courseId);
+
   return { message: "Review submitted", error: "", data: createdReview };
 };
 

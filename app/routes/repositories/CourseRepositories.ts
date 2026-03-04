@@ -36,7 +36,9 @@ export class CourseRepositories {
         `${BACKEND_URL}/course/getall?${queryParams.toString()}`,
       );
       if (!res.ok) {
-        console.error(`Failed to fetch courses: ${res.status} ${res.statusText}`);
+        console.error(
+          `Failed to fetch courses: ${res.status} ${res.statusText}`,
+        );
         throw new Error("Failed to fetch courses");
       }
       const data = await res.json();
@@ -96,6 +98,26 @@ export class CourseRepositories {
       return data.course;
     } catch (e) {
       console.error("Failed to delete course:", e);
+      return null;
+    }
+  }
+
+  public async RecalculateCourseRating(id: string) {
+    const BACKEND_URL = process.env.BACKEND_URL;
+    try {
+      const res = await fetch(
+        `${BACKEND_URL}/course/recalculate-rating/${id}`,
+        {
+          method: "POST",
+        },
+      );
+      if (!res.ok) {
+        throw new Error("Failed to recalculate course rating");
+      }
+      const data = await res.json();
+      return data.course;
+    } catch (e) {
+      console.error("Failed to recalculate course rating:", e);
       return null;
     }
   }

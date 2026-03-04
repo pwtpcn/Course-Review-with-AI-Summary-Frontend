@@ -3,9 +3,11 @@ export interface Course {
   nameTh: string;
   nameEn: string;
   description: string;
-  credit: number;
+  credits: number;
   year: number;
   category: "Core" | "Elective";
+  rating: number;
+  reviewCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
