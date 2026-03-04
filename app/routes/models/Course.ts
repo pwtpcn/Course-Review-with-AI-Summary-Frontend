@@ -22,3 +22,11 @@ export interface CourseFilter {
   year?: number;
   sortBy?: "newest" | "oldest";
 }
+
+export interface ReccommendCourse {
+    originalId: string;
+    nameTh: string;
+    nameEn: string;
+    description: string;
+    category: "Core" | "Elective";
+}
