@@ -1,6 +1,6 @@
 import { NavLink, useRouteLoaderData, useFetcher } from "react-router";
 
-export function Navbar() {
+export function AdminNavBar() {
   const data = useRouteLoaderData("root");
   const user = data?.user;
   const fetcher = useFetcher();
@@ -11,23 +11,18 @@ export function Navbar() {
   return (
     <nav className="w-full p-6 flex justify-between items-center text-[10px] md:text-xs z-50 uppercase tracking-widest font-['Press_Start_2P']">
       <div className="text-[#FCFC00] font-bold">
-        <NavLink to="/user/profile" className={linkClasses} end>
-          {user ? user.username : "Guest"}
-        </NavLink>
+        {user ? user.username : "Admin"}
       </div>
 
       <div className="flex items-center gap-6 md:gap-18">
-        <NavLink to="/" className={linkClasses} end>
-          Home
-        </NavLink>
-        <NavLink to="/review" className={linkClasses}>
-          Review
-        </NavLink>
-        <NavLink to="/course" className={linkClasses}>
+        <NavLink to="/admin/courseManage" className={linkClasses} end>
           Course
         </NavLink>
-        <NavLink to="/jobs" className={linkClasses}>
+        <NavLink to="/admin/jobsManage" className={linkClasses}>
           Jobs
+        </NavLink>
+        <NavLink to="/admin/ManageReport" className={linkClasses}>
+          Report
         </NavLink>
         <nav className="gap-5 flex">
           {user ? (
