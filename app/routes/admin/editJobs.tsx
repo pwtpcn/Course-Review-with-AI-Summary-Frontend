@@ -51,20 +51,20 @@ export const action: ActionFunction = async ({ request }) => {
         details: details,
     } as any;
 
-    const createdJob = await jobRepository.CreateJob(newJob);
+    const updateJob = await jobRepository.UpdateJob(newJob);
 
-    if (!createdJob) {
+    if (!updateJob) {
         return {
-            message: "Failed to create job",
-            error: { form: "Failed to create job. It might already exist." },
+            message: "Failed to update job",
+            error: { form: "Failed to update job. It might already exist." },
             data: null,
         };
     }
 
-    return { message: "Job submitted", error: "", data: createdJob };
+    return { message: "Job submitted", error: "", data: updateJob };
 };
 
-export default function AddJob() {
+export default function EditJob() {
     const fetcher = useFetcher();
     const errors = fetcher.data?.error || {};
 
@@ -94,7 +94,7 @@ export default function AddJob() {
             {/* Header */}
             <div className="text-center mb-12">
                 <h1 className="text-[#FCFC00] text-xl md:text-3xl mb-4 ">
-                    Add Job
+                    Edit Job Information
                 </h1>
             </div>
 
@@ -133,7 +133,7 @@ export default function AddJob() {
                 </div>
 
                 <p className="text-[#FCFC00] text-[14px] pt-4">
-                    Caution! : Please recheck your job information before add!
+                    Caution! : Please recheck your job information before save!
                 </p>
 
                 {/* Buttons */}
@@ -157,7 +157,7 @@ export default function AddJob() {
                                 : "opacity-50 cursor-not-allowed"
                             }`}
                     >
-                        Add
+                        Save
                     </button>
                 </div>
 

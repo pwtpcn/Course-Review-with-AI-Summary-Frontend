@@ -48,6 +48,7 @@ body {
   border: 1px solid var(--color-primary);
 }
 
+/* for write review in subject review page */
 .btn-auth-write-review {
   border-radius: 20px;
   background: linear-gradient(270deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-tertiary) 100%);
@@ -65,6 +66,8 @@ body {
   transition: all 0.2s ease-in-out;
 }
 
+
+/* write review page */
 .btn-cancel-review {
   border-radius: 20px;
   border: 1px solid var(--color-danger);
@@ -89,9 +92,36 @@ body {
   border: 1px solid var(--color-primary);
 }
 
-.btn-auth-add-data {
+/* add course in manage course page */
+.btn-auth-add-course {
   border-radius: 20px;
   background: linear-gradient(270deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-tertiary) 100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-auth-add-course:hover {
+  background: white;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.btn-auth-delete-course {
+  border-radius: 20px;
+  background: linear-gradient(270deg, var(--color-danger) 0%, var(--color-danger) 50%, var(--color-danger) 100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-auth-delete-course:hover {
+  background: white;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+
+/* add course & add jobs page */
+.btn-auth-add-data {
+  border-radius: 20px;
+  border: 1px solid var(--color-primary);
   transition: all 0.2s ease-in-out;
 }
 

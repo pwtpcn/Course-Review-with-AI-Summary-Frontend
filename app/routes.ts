@@ -28,5 +28,6 @@ export default [
   route("/admin/jobsManage", "routes/admin/jobsManage.tsx"),
   route("/admin/ManageReport", "routes/admin/ManageReport.tsx"),
   route("/admin/addCourse", "routes/admin/addCourse.tsx"),
-  route("/admin/addJob", "routes/admin/addJob.tsx"),
+  route("/admin/addJob", "routes/admin/addJobs.tsx"),
+  route("/admin/editCourse/:courseId", "routes/admin/editCourse.tsx"),
 ] satisfies RouteConfig;
