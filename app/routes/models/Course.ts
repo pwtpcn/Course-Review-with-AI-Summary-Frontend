@@ -6,6 +6,8 @@ export interface Course {
   credits: number;
   year: number;
   category: "Core" | "Elective";
+  rating: number;
+  reviewCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,4 +21,12 @@ export interface CourseFilter {
   category?: "Core" | "Elective";
   year?: number;
   sortBy?: "newest" | "oldest";
+}
+
+export interface ReccommendCourse {
+    originalId: string;
+    nameTh: string;
+    nameEn: string;
+    description: string;
+    category: "Core" | "Elective";
 }
