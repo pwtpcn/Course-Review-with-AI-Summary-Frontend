@@ -11,8 +11,6 @@ export const loader = async () => {
   const aiRepositories = new AIRepositories();
   const jobs = await jobRepositories.GetAllJobs();
 
-  console.log("Jobs: ", jobs);
-
   const jobSummaries: Record<string, JobSummary | null> = {};
 
   if (jobs) {
@@ -28,8 +26,6 @@ export const loader = async () => {
       }),
     );
   }
-
-  console.log("Job Summaries: ", jobSummaries);
 
   return { jobs: jobs || [], jobSummaries };
 };
