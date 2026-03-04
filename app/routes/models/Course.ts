@@ -3,7 +3,7 @@ export interface Course {
   nameTh: string;
   nameEn: string;
   description: string;
-  credit: number;
+  credits: number;
   year: number;
   category: "Core" | "Elective";
   createdAt: Date;

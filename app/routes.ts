@@ -13,15 +13,20 @@ export default [
 
   //Review
   route("/review", "routes/review/review.tsx"),
-  route("/review/subjectReview/:courseId", "routes/review/subjectReview.tsx"),
-  route("/review/writeReview/:courseId", "routes/review/writeReview.tsx"),
+  route("/review/subjectReview/:courseId", "routes/review/subjectreview.tsx"),
+  route("/review/writeReview/:courseId", "routes/review/writereview.tsx"),
+  route("/review/editReview/:courseId", "routes/review/editReview.tsx"),
 
   //API
   route("/api/search-courses", "routes/api/search-courses.ts"),
 
   //User
-  // route("userpage1", "routes/user/userpage1.tsx"),
+  route("/user/profile", "routes/user/profile.tsx"),
 
   //Admin
-  // route("adminpage1", "routes/admin/adminpage1.tsx"),
+  route("/admin/courseManage", "routes/admin/courseManage.tsx"),
+  route("/admin/jobsManage", "routes/admin/jobsManage.tsx"),
+  route("/admin/ManageReport", "routes/admin/ManageReport.tsx"),
+  route("/admin/addCourse", "routes/admin/addCourse.tsx"),
+  route("/admin/addJob", "routes/admin/addJob.tsx"),
 ] satisfies RouteConfig;

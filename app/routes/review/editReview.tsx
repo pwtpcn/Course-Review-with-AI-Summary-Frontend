@@ -149,7 +149,7 @@ export default function WriteReview() {
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-[#FCFC00] text-xl md:text-3xl mb-4 ">
-          Write your review
+          Edit your review
         </h1>
         <p className="text-[#FCFC00] text-sm md:text-base">
           {course.id} | {course.nameEn}
@@ -237,12 +237,12 @@ export default function WriteReview() {
         </div>
 
         <p className="text-[#FCFC00] text-[14px] pt-4">
-          Caution! : Please recheck your review before submit
+          Caution! : Please recheck your review again before save
         </p>
 
         {/* Buttons */}
         <div className="flex justify-between pt-8">
-          <NavLink to={`/review/subjectReview/${course.id}`}>
+          <NavLink to={`/user/profile`}>
             <button
               type="button"
               className="btn-cancel-review btn-cancel-review:hover text-white px-8 py-3 rounded-2xl text-xs transition-colors uppercase"
@@ -262,7 +262,7 @@ export default function WriteReview() {
                     : "opacity-50 cursor-not-allowed"
                 }`}
           >
-            Submit
+            Save
           </button>
         </div>
 

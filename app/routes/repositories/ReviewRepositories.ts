@@ -76,4 +76,27 @@ export class ReviewRepositories {
       return null;
     }
   }
+
+  public async DeleteReview(
+    id: string,
+    accessToken: string,
+  ): Promise<boolean> {
+    const BACKEND_URL = process.env.BACKEND_URL;
+    try {
+      const res = await fetch(`${BACKEND_URL}/review/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) {
+        throw new Error("Failed to delete review");
+      }
+      return true;
+    } catch (e) {
+      console.error("Failed to delete review:", e);
+      return false;
+    }
+  }
 }
