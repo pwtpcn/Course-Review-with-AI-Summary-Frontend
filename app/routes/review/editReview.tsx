@@ -1,6 +1,7 @@
 import type { ActionFunction, LoaderFunctionArgs } from "react-router";
 import { NavLink, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
+import { redirect } from "react-router";
 import { Heart } from "lucide-react";
 import { CourseRepositories } from "../repositories/CourseRepositories";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
@@ -8,28 +9,66 @@ import { UserRepository } from "../repositories/UserRepositories";
 import type { CreateReview } from "../models/Review";
 import { CautionPopup } from "~/component/CautionPopup";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-  const courseId = params.courseId;
-  if (!courseId) {
-    throw new Response("Course ID Not Found", { status: 404 });
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const reviewId = params.reviewId;
+  if (!reviewId) {
+    throw new Response("Review ID Not Found", { status: 404 });
+  }
+
+  const cookieHeader = request.headers.get("Cookie");
+  let accessToken = "";
+  if (cookieHeader) {
+    const cookies = Object.fromEntries(
+      cookieHeader.split("; ").map((c) => {
+        const [key, ...v] = c.split("=");
+        return [key, v.join("=")];
+      }),
+    );
+    accessToken = cookies["access_token"];
+  }
+
+  if (!accessToken) {
+    throw new Response("Unauthorized", { status: 401 });
+  }
+
+  const user = await UserRepository.getUser(accessToken);
+  if (!user) {
+    throw new Response("User not found", { status: 404 });
   }
 
   const courseRepository = new CourseRepositories();
-  const course = await courseRepository.GetCourseById(courseId);
+  const reviewRepository = new ReviewRepositories();
+
+  const review = await reviewRepository.GetReviewById(reviewId);
+
+  if (!review) {
+    throw new Response("Review Not Found", { status: 404 });
+  }
+
+  // Ensure user owns this review
+  if (review.userId !== user.id) {
+    throw new Response("Forbidden", { status: 403 });
+  }
+
+  const course = await courseRepository.GetCourseById(review.courseId);
 
   if (!course) {
     throw new Response("Course Not Found", { status: 404 });
   }
 
-  return { course };
+  if (review.isEdited) {
+    throw new Response("Review has already been edited", { status: 403 });
+  }
+
+  return { review };
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const courseId = params.courseId;
-  if (!courseId) {
+  const reviewId = params.reviewId;
+  if (!reviewId) {
     return {
-      message: "Course ID missing",
-      error: "Course ID missing",
+      message: "Review ID missing",
+      error: "Review ID missing",
       data: null,
     };
   }
@@ -53,6 +92,26 @@ export const action: ActionFunction = async ({ request, params }) => {
   const user = await UserRepository.getUser(accessToken);
   if (!user) {
     return { message: "User not found", error: "User not found", data: null };
+  }
+
+  const reviewRepository = new ReviewRepositories();
+  const existingReview = await reviewRepository.GetReviewById(reviewId);
+
+  if (!existingReview) {
+    return {
+      message: "Original review not found",
+      error: "Review not found",
+      data: null,
+    };
+  }
+
+  // Ensure user owns this review before updating
+  if (existingReview.userId !== user.id) {
+    return {
+      message: "Forbidden",
+      error: "Forbidden",
+      data: null,
+    };
   }
 
   const formData = await request.formData();
@@ -91,9 +150,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     };
   }
 
-  const reviewRepository = new ReviewRepositories();
-  const newReview: CreateReview = {
-    courseId: courseId,
+  const reviewRepositoryInput = new ReviewRepositories();
+  const updatedReviewData: Partial<CreateReview> = {
     content: content,
     pros: pros,
     cons: cons,
@@ -101,46 +159,46 @@ export const action: ActionFunction = async ({ request, params }) => {
     testPrepare: prepare,
   };
 
-  const createdReview = await reviewRepository.CreateReview(
-    newReview,
+  const updatedReview = await reviewRepositoryInput.UpdateReview(
+    existingReview.id,
+    updatedReviewData,
     accessToken,
   );
 
-  if (!createdReview) {
+  if (!updatedReview) {
     return {
-      message: "Failed to create review",
-      error: "Failed to create review",
+      message: "Failed to update review",
+      error: "Failed to update review",
       data: null,
     };
   }
 
-  return { message: "Review submitted", error: "", data: createdReview };
+  return redirect("/user/profile");
 };
 
-export default function WriteReview() {
+export default function EditReview() {
   const fetcher = useFetcher();
   const errors = fetcher.data?.error || {};
 
-  const { course } = useLoaderData<typeof loader>();
+  const { review } = useLoaderData<typeof loader>();
   const [showRecheckedConfirm, setShowRecheckedConfirm] = useState(false);
   const navigate = useNavigate();
 
-  const [rating, setRating] = useState(0);
-  const [content, setContent] = useState("");
-  const [pros, setPros] = useState("");
-  const [prepare, setPrepare] = useState("");
-  const [cons, setCons] = useState("");
+  const [rating, setRating] = useState(review.rating || 0);
+  const [content, setContent] = useState(review.content || "");
+  const [pros, setPros] = useState(review.pros || "");
+  const [prepare, setPrepare] = useState(
+    review.testPrepare && review.testPrepare !== "-" ? review.testPrepare : "",
+  );
+  const [cons, setCons] = useState(
+    review.cons && review.cons !== "-" ? review.cons : "",
+  );
 
   const isFormValid = content.length > 0 && pros.length > 0 && rating > 0;
 
   useEffect(() => {
-    if (
-      fetcher.state === "idle" &&
-      fetcher.data?.message === "Review submitted"
-    ) {
-      navigate(`/review/subjectReview/${course.id}`, {
-        state: { reviewSubmitted: true },
-      });
+    if (fetcher.state === "idle" && fetcher.data && fetcher.data.error) {
+      setShowRecheckedConfirm(false);
     }
   }, [fetcher.state, fetcher.data, navigate]);
 
@@ -152,7 +210,7 @@ export default function WriteReview() {
           Edit your review
         </h1>
         <p className="text-[#FCFC00] text-sm md:text-base">
-          {course.id} | {course.nameEn}
+          {review.courseId} | {review.course?.nameEn}
         </p>
       </div>
 
@@ -271,6 +329,7 @@ export default function WriteReview() {
           isOpen={showRecheckedConfirm}
           onClose={() => setShowRecheckedConfirm(false)}
           isSubmitting={fetcher.state !== "idle"}
+          message="Press confirm to save your review"
         />
       </fetcher.Form>
     </div>

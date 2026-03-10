@@ -11,9 +11,13 @@ export function Navbar() {
   return (
     <nav className="w-full p-6 flex justify-between items-center text-[10px] md:text-xs z-50 uppercase tracking-widest font-['Press_Start_2P']">
       <div className="text-[#FCFC00] font-bold">
-        <NavLink to="/user/profile" className={linkClasses} end>
-          {user ? user.username : "Guest"}
-        </NavLink>
+        {user ? (
+          <NavLink to="/user/profile" className={linkClasses} end>
+            {user.username}
+          </NavLink>
+        ) : (
+          <span className="cursor-default">Guest</span>
+        )}
       </div>
 
       <div className="flex items-center gap-6 md:gap-18">

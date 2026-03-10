@@ -13,6 +13,7 @@ export const ReviewCard = ({
 }) => {
   const [isReportPopupOpen, setIsReportPopupOpen] = useState(false);
   const fetcher = useFetcher();
+  const deleteFetcher = useFetcher();
   const rootData = useRouteLoaderData("root") as
     | { user: User | null }
     | undefined;
@@ -38,6 +39,22 @@ export const ReviewCard = ({
       alert(`Error: ${(fetcher.data as any).error}`);
     }
   }, [fetcher.data, fetcher.state]);
+
+  useEffect(() => {
+    if (
+      deleteFetcher.data &&
+      (deleteFetcher.data as any).success &&
+      deleteFetcher.state === "idle"
+    ) {
+      alert("ลบรีวิวเรียบร้อยแล้ว");
+    } else if (
+      deleteFetcher.data &&
+      (deleteFetcher.data as any).error &&
+      deleteFetcher.state === "idle"
+    ) {
+      alert(`Error: ${(deleteFetcher.data as any).error}`);
+    }
+  }, [deleteFetcher.data, deleteFetcher.state]);
 
   const borderColor = "border-[#1BE1F3]";
   const headerBg = "bg-[#1BE1F3]";
@@ -80,10 +97,11 @@ export const ReviewCard = ({
         <div className="mt-6 flex justify-end">
           {showManageActions ? (
             <div className="flex gap-4">
-              <NavLink to={`/review/editReview/${data.course?.id}`}>
+              {data.isEdited ? (
                 <button
-                  className="text-[#1BE1F3] hover:text-cyan-400 text-xs md:text-sm flex items-center gap-1 transition-colors cursor-pointer"
-                  title="แก้ไขรีวิว"
+                  className="text-gray-500 text-xs md:text-sm flex items-center gap-1 cursor-not-allowed"
+                  title="รีวิวนี้ถูกแก้ไขไปแล้ว (แก้ไขได้เพียงครั้งเดียว)"
+                  disabled
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -100,16 +118,46 @@ export const ReviewCard = ({
                     <path d="M14 2v4a2 2 0 0 0 2 2h4" />
                     <path d="M10.4 12.6a2 2 0 1 1 3 3L8 21l-4 1 1-4Z" />
                   </svg>
-                  Edit
+                  Edited
                 </button>
-              </NavLink>
+              ) : (
+                <NavLink to={`/review/editReview/${data.id}`}>
+                  <button
+                    className="text-[#1BE1F3] hover:text-cyan-400 text-xs md:text-sm flex items-center gap-1 transition-colors cursor-pointer"
+                    title="แก้ไขรีวิว"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v10" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                      <path d="M10.4 12.6a2 2 0 1 1 3 3L8 21l-4 1 1-4Z" />
+                    </svg>
+                    Edit
+                  </button>
+                </NavLink>
+              )}
               <button
                 className="text-red-500 hover:text-red-400 text-xs md:text-sm flex items-center gap-1 transition-colors cursor-pointer"
                 onClick={() => {
                   if (window.confirm("คุณต้องการลบรีวิวนี้ใช่หรือไม่?")) {
-                    alert("ลบรีวิวเรียบร้อยแล้ว");
+                    const formData = new FormData();
+                    formData.append("reviewId", data.id);
+                    deleteFetcher.submit(formData, {
+                      method: "post",
+                      action: "/api/delete-review",
+                    });
                   }
                 }}
+                disabled={deleteFetcher.state !== "idle"}
                 title="ลบรีวิว"
               >
                 <svg
@@ -132,7 +180,7 @@ export const ReviewCard = ({
                 Delete
               </button>
             </div>
-          ) : user?.id !== data.user?.id ? (
+          ) : user?.id !== data.userId ? (
             <>
               {hasReported ? (
                 <button
