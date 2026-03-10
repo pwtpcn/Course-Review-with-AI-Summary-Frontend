@@ -19,6 +19,7 @@ export default [
 
   //API
   route("/api/search-courses", "routes/api/search-courses.ts"),
+  route("/api/report-review", "routes/api/report-review.ts"),
 
   //User
   route("/user/profile", "routes/user/profile.tsx"),

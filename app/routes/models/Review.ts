@@ -18,6 +18,7 @@ export interface Review {
   updatedAt: Date;
   user?: User;
   course?: Course;
+  reports?: any[];
 }
 
 export interface CreateReview {
