@@ -51,15 +51,29 @@ export default function ReviewPage() {
         </div>
 
         {/* Reviews List */}
-        <div className="w-full pb-20 mt-4">
-          {reviews &&
+        <div className="w-full pb-20 mt-4 flex flex-col items-center">
+          {reviews && reviews.length > 0 ? (
             reviews.map((review: Review) => (
               <ReviewCard
                 key={review.id}
                 data={review}
                 showManageActions={true}
               />
-            ))}
+            ))
+          ) : (
+            <div className="w-full max-w-4xl border-2 border-[#1BE1F3] p-10 flex flex-col items-center justify-center text-center mt-6 bg-black">
+              <div className="text-[#FCFC00] text-lg md:text-xl mb-6">
+                NO REVIEWS YET
+              </div>
+              <div className="text-white text-xs md:text-sm leading-loose">
+                You have not written any reviews yet.
+                <br />
+                <span className="text-gray-400 mt-2 inline-block">
+                  Share your course experiences to help others!
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
