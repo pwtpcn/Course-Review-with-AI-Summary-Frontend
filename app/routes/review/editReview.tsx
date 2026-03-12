@@ -295,7 +295,7 @@ export default function EditReview() {
         </div>
 
         <p className="text-[#FCFC00] text-[14px] pt-4">
-          Caution! : Please recheck your review again before save
+          Caution! : You can only edit this review one time, please recheck your review again before save
         </p>
 
         {/* Buttons */}
@@ -329,7 +329,7 @@ export default function EditReview() {
           isOpen={showRecheckedConfirm}
           onClose={() => setShowRecheckedConfirm(false)}
           isSubmitting={fetcher.state !== "idle"}
-          message="Press confirm to save your review"
+          message="You can only edit this review one time"
         />
       </fetcher.Form>
     </div>
