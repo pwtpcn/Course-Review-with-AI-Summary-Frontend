@@ -8,3 +8,10 @@ export interface Report {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface ReportFilter {
+    search?: string;
+    status?: "pending" | "approved" | "rejected";
+    reason?: "spam" | "inappropriate" | "irrelevant" | "other";
+    sortBy?: "newest" | "oldest";
+}

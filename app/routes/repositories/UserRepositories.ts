@@ -55,4 +55,20 @@ export class UserRepository {
       return null;
     }
   }
+  public async getUserById(id: string): Promise<User | null> {
+    const BACKEND_URL = process.env.BACKEND_URL;
+    try {
+      const res = await fetch(`${BACKEND_URL}/user/getbyid/${id}`);
+      if (!res.ok) {
+        if (res.status === 404) return null;
+        throw new Error("Failed to fetch user");
+      }
+
+      const data = await res.json();
+      return data.user;
+    } catch (e) {
+      console.error("Failed to fetch user by id:", e);
+      return null;
+    }
+  }
 }

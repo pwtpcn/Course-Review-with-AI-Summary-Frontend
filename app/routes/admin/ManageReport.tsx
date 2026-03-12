@@ -1,47 +1,58 @@
 import { useState } from "react";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import { useLoaderData, useFetcher, Form } from "react-router";
 import { ReportRepositories } from "../repositories/ReportRepositories";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
+import { UserRepository } from "../repositories/UserRepositories";
 import { AdminNavBar } from "../../component/AdminNavBar";
-import type { Report } from "../models/Report";
+import type { Report, ReportFilter } from "../models/Report";
 import type { Review } from "../models/Review";
+import type { User } from "../models/User";
 
-export const loader = async ({ request }: { request: Request }) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
     const url = new URL(request.url);
-    const search = url.searchParams.get("search")?.toLowerCase() || "";
-    const statusFilter = url.searchParams.get("status") || "all";
+    const search = url.searchParams.get("search") || undefined;
+    const statusRaw = url.searchParams.get("status");
+    const status = (statusRaw && statusRaw !== "all") ? statusRaw : undefined;
+    const sortBy = (url.searchParams.get("sortBy") || "newest") as ReportFilter["sortBy"];
+
+    // Send only status + sortBy to backend (search includes username which needs post-fetch)
+    const filter: ReportFilter = {
+        status: status as ReportFilter["status"],
+        sortBy,
+    };
 
     const reportRepository = new ReportRepositories();
     const reviewRepository = new ReviewRepositories();
-    const reports = await reportRepository.GetAllReports("newest");
+    const userRepository = new UserRepository();
+    const reports = await reportRepository.GetAllReports(filter);
 
-    let reportsWithReviews: (Report & { review?: Review | null })[] = [];
+    let reportsWithData: (Report & { review?: Review | null; reporter?: User | null })[] = [];
     if (reports) {
-        reportsWithReviews = await Promise.all(
+        reportsWithData = await Promise.all(
             reports.map(async (report) => {
-                const review = await reviewRepository.GetReviewById(report.reviewId);
-                return { ...report, review };
+                const [review, reporter] = await Promise.all([
+                    reviewRepository.GetReviewById(report.reviewId),
+                    userRepository.getUserById(report.userId),
+                ]);
+                return { ...report, review, reporter };
             })
         );
-        
-        // Client-side filtering
-        if (search || statusFilter !== "all") {
-            reportsWithReviews = reportsWithReviews.filter((report) => {
-                const matchesSearch = search 
-                    ? report.id.toLowerCase().includes(search) || report.reviewId.toLowerCase().includes(search)
-                    : true;
-                const matchesStatus = statusFilter !== "all" 
-                    ? report.status === statusFilter 
-                    : true;
-                return matchesSearch && matchesStatus;
-            });
+
+        // Post-fetch filter: match search against IDs and username
+        if (search) {
+            reportsWithData = reportsWithData.filter((report) =>
+                report.id.includes(search)
+                || report.reviewId.includes(search)
+                || report.reporter?.username?.includes(search)
+            );
         }
     }
 
-    return { reports: reportsWithReviews, search, statusFilter };
+    return { reports: reportsWithData, search: search ?? "", statusFilter: status ?? "all", sortBy };
 };
 
-export const action = async ({ request }: { request: Request }) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
     const formData = await request.formData();
     const intent = formData.get("intent");
     const reportId = formData.get("reportId") as string;
@@ -125,7 +136,7 @@ export default function ManageReport() {
                                 name="search"
                                 id="search"
                                 defaultValue={search}
-                                placeholder="Report ID or Review ID..."
+                                placeholder="Report ID, Review ID, or Username..."
                                 className="w-full bg-black border border-[#2A2A2A] rounded-lg p-3 text-white font-chakra-petch focus:outline-none focus:border-[#1BE1F3] text-xs"
                             />
                         </div>
@@ -162,7 +173,7 @@ export default function ManageReport() {
                             No reports found.
                         </div>
                     ) : (
-                        reports.map((report: Report & { review?: Review | null }) => (
+                        reports.map((report: Report & { review?: Review | null; reporter?: User | null }) => (
                             <div
                                 key={report.id}
                                 className={`bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl overflow-hidden ${report.status !== 'pending' ? 'opacity-50' : ''}`}
@@ -176,28 +187,36 @@ export default function ManageReport() {
                                     <div className="flex flex-col gap-2">
                                         <div className="flex items-center gap-3">
                                             <span className="text-xs text-[#1BE1F3] w-24">Report ID:</span>
-                                            <span className="text-[10px] text-white tracking-widest">{report.id}</span>
+                                            <span className="text-sm text-white font-chakra-petch tracking-wide">{report.id}</span>
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <span className="text-xs text-[#1BE1F3] w-24">Review ID:</span>
-                                            <span className="text-[10px] text-white tracking-widest">{report.reviewId}</span>
+                                            <span className="text-sm text-white font-chakra-petch tracking-wide">{report.reviewId}</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-xs text-[#1BE1F3] w-24">Reporter:</span>
+                                            <span className="text-sm text-[#FCFC00] font-chakra-petch">
+                                                {report.reporter?.username ?? (
+                                                    <span className="text-gray-500 italic">Unknown</span>
+                                                )}
+                                            </span>
                                         </div>
                                         <div className="flex items-center gap-3 mt-2">
                                             <span className="text-xs text-[#FCFC00] w-24">Reason:</span>
-                                            <span className="text-xs text-white uppercase">{report.reason}</span>
+                                            <span className="text-sm text-white font-chakra-petch uppercase">{report.reason}</span>
                                         </div>
                                     </div>
 
                                     {/* Right Side: Status and Date */}
                                     <div className="flex flex-col items-end justify-center min-w-[80px] gap-2">
-                                        <span className={`text-[10px] px-3 py-1 rounded-full uppercase ${report.status === 'pending'
+                                        <span className={`text-xs font-chakra-petch px-3 py-1 rounded-full uppercase ${report.status === 'pending'
                                                 ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/50'
                                                 : report.status === 'approved'
                                                     ? 'bg-red-500/20 text-red-500 border border-red-500/50'
                                                     : 'bg-green-500/20 text-green-500 border border-green-500/50'}`}>
                                             {report.status}
                                         </span>
-                                        <span className="text-[8px] text-gray-400">
+                                        <span className="text-xs font-chakra-petch text-gray-400">
                                             {new Date(report.createdAt).toLocaleDateString()}
                                         </span>
                                         <svg 
@@ -222,7 +241,7 @@ export default function ManageReport() {
                                         <div className="p-6 border-t border-[#2A2A2A] bg-[#0d0d0d]">
                                             <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
                                                 <span className="text-xs text-[#1BE1F3] block mb-2">Notice Info (Report Details):</span>
-                                                <p className="text-[11px] leading-relaxed break-words font-sans text-gray-300">{report.content}</p>
+                                                <p className="text-sm font-chakra-petch leading-relaxed text-gray-300">{report.content}</p>
                                             </div>
 
                                             {/* Display Attached Review Info */}
@@ -236,27 +255,27 @@ export default function ManageReport() {
                                                         <div className="flex justify-between items-start mb-3 border-b border-[#222] pb-3">
                                                             <div>
                                                                 <div className="text-[10px] text-gray-500 mb-1">Course ID</div>
-                                                                <div className="text-xs text-[#1BE1F3]">{report.review.courseId}</div>
+                                                                <div className="text-sm font-chakra-petch text-[#1BE1F3]">{report.review.courseId}</div>
                                                             </div>
                                                             <div className="text-right">
                                                                 <div className="text-[10px] text-gray-500 mb-1">Hard Level</div>
-                                                                <div className="text-xs text-[#FCFC00]">{report.review.rating}/5</div>
+                                                                <div className="text-sm font-chakra-petch text-[#FCFC00]">{report.review.rating}/5</div>
                                                             </div>
                                                         </div>
                                                         <div className="mb-4">
                                                             <span className="text-[10px] text-gray-500 block mb-1">Content:</span>
-                                                            <div className="text-[11px] font-sans text-white leading-relaxed whitespace-pre-line">
+                                                            <div className="text-sm font-chakra-petch text-white leading-relaxed whitespace-pre-line">
                                                                 {report.review.content}
                                                             </div>
                                                         </div>
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 pt-3 border-t border-[#222]">
                                                             <div>
                                                                 <span className="text-[10px] text-green-400 block mb-1">Pros:</span>
-                                                                <p className="text-[10px] text-gray-300 font-sans">{report.review.pros || "-"}</p>
+                                                                <p className="text-sm font-chakra-petch text-gray-300">{report.review.pros || "-"}</p>
                                                             </div>
                                                             <div>
                                                                 <span className="text-[10px] text-red-400 block mb-1">Cons:</span>
-                                                                <p className="text-[10px] text-gray-300 font-sans">{report.review.cons || "-"}</p>
+                                                                <p className="text-sm font-chakra-petch text-gray-300">{report.review.cons || "-"}</p>
                                                             </div>
                                                         </div>
                                                     </div>

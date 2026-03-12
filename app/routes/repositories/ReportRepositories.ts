@@ -1,13 +1,16 @@
-import type { Report } from "../models/Report";
+import type { Report, ReportFilter } from "../models/Report";
 
 export class ReportRepositories {
   public async GetAllReports(
-    sortBy?: "newest" | "oldest",
+    filter?: ReportFilter,
   ): Promise<Report[] | null> {
     const BACKEND_URL = process.env.BACKEND_URL;
     const queryParams = new URLSearchParams();
 
-    if (sortBy) queryParams.append("sortBy", sortBy);
+    if (filter?.sortBy) queryParams.append("sortBy", filter.sortBy);
+    if (filter?.status) queryParams.append("status", filter.status);
+    if (filter?.reason) queryParams.append("reason", filter.reason);
+    if (filter?.search) queryParams.append("search", filter.search);
 
     try {
       const res = await fetch(
