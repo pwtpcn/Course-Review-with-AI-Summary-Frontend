@@ -1,18 +1,33 @@
-import { useLoaderData } from "react-router";
+import type { LoaderFunctionArgs } from "react-router";
+import { useLoaderData, Form } from "react-router";
 import { CourseRepositories } from "../repositories/CourseRepositories";
 import type { Course } from "../models/Course";
 import { AdminNavBar } from "../../component/AdminNavBar";
 import { NavLink } from "react-router";
 
-export const loader = async () => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const url = new URL(request.url);
+    const search = url.searchParams.get("search") || undefined;
+    const sortBy = url.searchParams.get("sortBy") || "idAsc";
+    const category = url.searchParams.get("category") || undefined;
+    const year = url.searchParams.get("year");
+
+    const filter = {
+        search,
+        sortBy: sortBy as "newest" | "oldest" | "idAsc",
+        category: category as "Core" | "Elective" | undefined,
+        year: year ? Number(year) : undefined,
+    };
+
     const courseRepository = new CourseRepositories();
     // Fetch all courses, we can sort by newest or leave default
-    const courses = await courseRepository.GetAllCourses({ sortBy: "newest" });
-    return { courses };
+    const courses = await courseRepository.GetAllCourses(filter);
+    
+    return { courses, search, sortBy, category, year };
 };
 
 export default function CourseManage() {
-    const { courses } = useLoaderData<typeof loader>();
+    const { courses, search, sortBy, category, year } = useLoaderData<typeof loader>();
 
     return (
         <div className="min-h-screen bg-black text-white font-['Press_Start_2P'] relative flex flex-col">
@@ -35,6 +50,75 @@ export default function CourseManage() {
                             </button>
                         </NavLink>
                     </div>
+                </div>
+
+                <div className="w-full max-w-7xl mx-auto mb-6">
+                    <Form method="get" className="bg-[#111] border border-[#2A2A2A] rounded-xl p-4 flex flex-col md:flex-row gap-4 items-end">
+                        <div className="flex-1 w-full space-y-2">
+                            <label htmlFor="search" className="text-xs text-gray-400">Search</label>
+                            <input
+                                type="text"
+                                name="search"
+                                id="search"
+                                defaultValue={search || ""}
+                                placeholder="Course ID or Name..."
+                                className="w-full bg-black border border-[#2A2A2A] rounded-lg p-3 text-white focus:outline-none focus:border-[#1BE1F3] text-xs font-chakra-petch"
+                            />
+                        </div>
+                        
+                        <div className="w-full md:w-48 space-y-2">
+                            <label htmlFor="category" className="text-xs text-gray-400">Category</label>
+                            <select
+                                name="category"
+                                id="category"
+                                defaultValue={category || ""}
+                                className="w-full bg-black border border-[#2A2A2A] rounded-lg p-3 text-white focus:outline-none focus:border-[#1BE1F3] text-xs font-chakra-petch appearance-none"
+                            >
+                                <option value="">All Categories</option>
+                                <option value="Core">Core</option>
+                                <option value="Elective">Elective</option>
+                            </select>
+                        </div>
+                        
+                        <div className="w-full md:w-32 space-y-2">
+                            <label htmlFor="year" className="text-xs text-gray-400">Year</label>
+                            <select
+                                name="year"
+                                id="year"
+                                defaultValue={year || ""}
+                                className="w-full bg-black border border-[#2A2A2A] rounded-lg p-3 text-white focus:outline-none focus:border-[#1BE1F3] text-xs font-chakra-petch appearance-none"
+                            >
+                                <option value="">All</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+
+                        <div className="w-full md:w-48 space-y-2">
+                            <label htmlFor="sortBy" className="text-xs text-gray-400">Sort By</label>
+                            <select
+                                name="sortBy"
+                                id="sortBy"
+                                defaultValue={sortBy || "idAsc"}
+                                className="w-full bg-black border border-[#2A2A2A] rounded-lg p-3 text-white focus:outline-none focus:border-[#1BE1F3] text-xs font-chakra-petch appearance-none"
+                            >
+                                <option value="idAsc">Course ID (Asc)</option>
+                                <option value="newest">Newest Added</option>
+                                <option value="oldest">Oldest Added</option>
+                            </select>
+                        </div>
+
+                        <div className="w-full md:w-auto pt-2 md:pt-0">
+                            <button
+                                type="submit"
+                                className="w-full md:w-auto bg-[#1BE1F3]/10 hover:bg-[#1BE1F3]/20 text-[#1BE1F3] border border-[#1BE1F3]/30 py-3 px-6 rounded-lg text-xs md:text-sm transition-colors"
+                            >
+                                Filter
+                            </button>
+                        </div>
+                    </Form>
                 </div>
 
                 <div className="w-full max-w-7xl mx-auto overflow-hidden rounded-xl border border-[#2A2A2A] bg-[#0A0A0A]">

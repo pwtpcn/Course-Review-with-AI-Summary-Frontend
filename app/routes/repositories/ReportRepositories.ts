@@ -66,13 +66,14 @@ export class ReportRepositories {
         },
       });
       if (!res.ok) {
-        throw new Error("Failed to approve report");
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to approve report");
       }
       const data = await res.json();
       return data.report;
     } catch (e) {
       console.error("Failed to approve report:", e);
-      return null;
+      throw e;
     }
   }
 
@@ -90,13 +91,14 @@ export class ReportRepositories {
         },
       });
       if (!res.ok) {
-        throw new Error("Failed to cancel report");
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to cancel report");
       }
       const data = await res.json();
       return data.report;
     } catch (e) {
       console.error("Failed to cancel report:", e);
-      return null;
+      throw e;
     }
   }
 }

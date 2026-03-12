@@ -1,14 +1,22 @@
 import type { ActionFunction, LoaderFunctionArgs } from "react-router";
 import { NavLink, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
-import { Heart } from "lucide-react";
 import { CourseRepositories } from "../repositories/CourseRepositories";
-import { ReviewRepositories } from "../repositories/ReviewRepositories";
 import { UserRepository } from "../repositories/UserRepositories";
-import type { CreateReview } from "../models/Review";
 import { CautionPopup } from "~/component/CautionPopup";
 
-
+export const loader = async ({ params }: LoaderFunctionArgs) => {
+    const courseId = params.courseId;
+    if (!courseId) {
+        throw new Response("Course ID Not Found", { status: 404 });
+    }
+    const courseRepository = new CourseRepositories();
+    const course = await courseRepository.GetCourseById(courseId);
+    if (!course) {
+        throw new Response("Course Not Found", { status: 404 });
+    }
+    return { course };
+};
 export const action: ActionFunction = async ({ request }) => {
     const cookieHeader = request.headers.get("Cookie");
     let accessToken = "";
@@ -84,19 +92,20 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function AddCourse() {
+    const { course } = useLoaderData<typeof loader>();
     const fetcher = useFetcher();
     const errors = fetcher.data?.error || {};
 
     const [showRecheckedConfirm, setShowRecheckedConfirm] = useState(false);
     const navigate = useNavigate();
 
-    const [id, setId] = useState("");
-    const [nameTh, setNameTh] = useState("");
-    const [nameEn, setNameEn] = useState("");
-    const [description, setDescription] = useState("");
-    const [credits, setCredits] = useState<number | "">("");
-    const [year, setYear] = useState<number | "">("");
-    const [category, setCategory] = useState<"Core" | "Elective">("Core");
+    const [id, setId] = useState(course?.id || "");
+    const [nameTh, setNameTh] = useState(course?.nameTh || "");
+    const [nameEn, setNameEn] = useState(course?.nameEn || "");
+    const [description, setDescription] = useState(course?.description || "");
+    const [credits, setCredits] = useState<number | "">(course?.credits || "");
+    const [year, setYear] = useState<number | "">(course?.year || "");
+    const [category, setCategory] = useState<"Core" | "Elective">(course?.category || "Core");
 
     const isFormValid =
         id.length > 0 &&
@@ -141,7 +150,7 @@ export default function AddCourse() {
                         name="id"
                         value={id}
                         onChange={(e) => setId(e.target.value)}
-                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white font-chakra-petch placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
                         placeholder="e.g. 01234567"
                         maxLength={10}
                     />
@@ -156,7 +165,7 @@ export default function AddCourse() {
                         name="nameTh"
                         value={nameTh}
                         onChange={(e) => setNameTh(e.target.value)}
-                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white font-chakra-petch placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
                     />
                     {errors.nameTh && <p className="text-red-500 text-xs">{errors.nameTh}</p>}
                 </div>
@@ -169,7 +178,7 @@ export default function AddCourse() {
                         name="nameEn"
                         value={nameEn}
                         onChange={(e) => setNameEn(e.target.value)}
-                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white font-chakra-petch placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
                     />
                     {errors.nameEn && <p className="text-red-500 text-xs">{errors.nameEn}</p>}
                 </div>
@@ -181,7 +190,7 @@ export default function AddCourse() {
                         name="description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="w-full h-32 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs leading-relaxed resize-none"
+                        className="w-full h-32 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white font-chakra-petch placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs leading-relaxed resize-none"
                     />
                     {errors.description && (
                         <p className="text-red-500 text-xs">{errors.description}</p>
@@ -197,7 +206,7 @@ export default function AddCourse() {
                             name="credits"
                             value={credits}
                             onChange={(e) => setCredits(e.target.value ? Number(e.target.value) : "")}
-                            className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                            className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white font-chakra-petch placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
                             min={1}
                         />
                         {errors.credits && <p className="text-red-500 text-xs">{errors.credits}</p>}
@@ -211,7 +220,7 @@ export default function AddCourse() {
                             name="year"
                             value={year}
                             onChange={(e) => setYear(e.target.value ? Number(e.target.value) : "")}
-                            className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                            className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white font-chakra-petch placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
                             min={1}
                             max={6}
                         />
@@ -226,7 +235,7 @@ export default function AddCourse() {
                         name="category"
                         value={category}
                         onChange={(e) => setCategory(e.target.value as "Core" | "Elective")}
-                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white focus:outline-none focus:border-blue-400 text-xs appearance-none"
+                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white font-chakra-petch focus:outline-none focus:border-blue-400 text-xs appearance-none"
                     >
                         <option value="Core">Core</option>
                         <option value="Elective">Elective</option>

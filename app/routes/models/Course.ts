@@ -20,7 +20,7 @@ export interface CourseFilter {
   search?: string;
   category?: "Core" | "Elective";
   year?: number;
-  sortBy?: "newest" | "oldest";
+  sortBy?: "newest" | "oldest" | "idAsc";
 }
 
 export interface ReccommendCourse {
