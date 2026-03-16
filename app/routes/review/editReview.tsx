@@ -6,7 +6,7 @@ import { Heart } from "lucide-react";
 import { CourseRepositories } from "../repositories/CourseRepositories";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
 import { UserRepository } from "../repositories/UserRepositories";
-import type { CreateReview } from "../models/Review";
+import type { UpdateReview } from "../models/Review";
 import { CautionPopup } from "~/component/CautionPopup";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -151,7 +151,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const reviewRepositoryInput = new ReviewRepositories();
-  const updatedReviewData: Partial<CreateReview> = {
+  const updatedReviewData: UpdateReview = {
     content: content,
     pros: pros,
     cons: cons,

@@ -1,18 +1,20 @@
 import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData, Form } from "react-router";
 import { CourseRepositories } from "../repositories/CourseRepositories";
-import type { Course } from "../models/Course";
+import type { Course, CourseFilter } from "../models/Course";
 import { AdminNavBar } from "../../component/AdminNavBar";
 import { NavLink } from "react-router";
+import { requireAdmin } from "../../lib/auth";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const user = await requireAdmin(request);
     const url = new URL(request.url);
     const search = url.searchParams.get("search") || undefined;
     const sortBy = url.searchParams.get("sortBy") || "idAsc";
     const category = url.searchParams.get("category") || undefined;
     const year = url.searchParams.get("year");
 
-    const filter = {
+    const filter: CourseFilter = {
         search,
         sortBy: sortBy as "newest" | "oldest" | "idAsc",
         category: category as "Core" | "Elective" | undefined,
@@ -20,7 +22,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     };
 
     const courseRepository = new CourseRepositories();
-    // Fetch all courses, we can sort by newest or leave default
     const courses = await courseRepository.GetAllCourses(filter);
     
     return { courses, search, sortBy, category, year };

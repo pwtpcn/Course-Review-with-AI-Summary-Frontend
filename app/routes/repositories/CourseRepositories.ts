@@ -1,12 +1,13 @@
-import type { Course, CourseFilter } from "../models/Course";
+import type { Course, CourseFilter, CreateCourse, UpdateCourse } from "../models/Course";
 
 export class CourseRepositories {
-  public async CreateCourse(course: Course) {
+  public async CreateCourse(course: CreateCourse, accessToken: string) {
     const BACKEND_URL = process.env.BACKEND_URL;
     try {
       const res = await fetch(`${BACKEND_URL}/course/create`, {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(course),
@@ -64,12 +65,13 @@ export class CourseRepositories {
     }
   }
 
-  public async UpdateCourse(id: string, course: Course) {
+  public async UpdateCourse(id: string, course: UpdateCourse, accessToken: string) {
     const BACKEND_URL = process.env.BACKEND_URL;
     try {
       const res = await fetch(`${BACKEND_URL}/course/update/${id}`, {
         method: "PUT",
         headers: {
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(course),
@@ -85,11 +87,15 @@ export class CourseRepositories {
     }
   }
 
-  public async DeleteCourse(id: string) {
+  public async DeleteCourse(id: string, accessToken: string) {
     const BACKEND_URL = process.env.BACKEND_URL;
     try {
       const res = await fetch(`${BACKEND_URL}/course/delete/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
       });
       if (!res.ok) {
         throw new Error("Failed to delete course");

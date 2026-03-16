@@ -7,8 +7,11 @@ import { ReviewRepositories } from "../repositories/ReviewRepositories";
 import { AdminNavBar } from "../../component/AdminNavBar";
 import { HeartRating } from "../../component/HeartRating";
 import { ReviewDetailModal } from "../../component/ReviewDetailModal";
+import { requireAdmin, getAccessToken } from "../../lib/auth";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const user = await requireAdmin(request);
+
     const url = new URL(request.url);
     const search = url.searchParams.get("search") || undefined;
     const status = url.searchParams.get("status") || undefined;
@@ -22,16 +25,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
     const reviewRepository = new ReviewRepositories();
     const reviews = await reviewRepository.GetAllReviews(filter);
-    return { reviews, search, status, sortBy };
+    return { reviews, search, status, sortBy, user };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+    await requireAdmin(request);
+    const accessToken = getAccessToken(request) || "";
+
     const formData = await request.formData();
     const intent = formData.get("intent") as string;
     const reviewId = formData.get("reviewId") as string;
-
-    // Admin token — adjust how you get this from session/cookies as needed
-    const accessToken = formData.get("accessToken") as string ?? "";
 
     const repo = new ReviewRepositories();
 

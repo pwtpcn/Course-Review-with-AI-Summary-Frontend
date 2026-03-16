@@ -1,13 +1,15 @@
-import { useLoaderData } from "react-router";
+import { type LoaderFunctionArgs, useLoaderData } from "react-router";
 import { JobRepositories } from "../repositories/JobRepositories";
 import type { Job } from "../models/Job";
 import { AdminNavBar } from "../../component/AdminNavBar";
 import { NavLink } from "react-router";
+import { requireAdmin } from "../../lib/auth";
 
-export const loader = async () => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    await requireAdmin(request);
     const jobRepository = new JobRepositories();
-    // Fetch all courses, we can sort by newest or leave default
     const jobs = await jobRepository.GetAllJobs();
+
     return { jobs };
 };
 

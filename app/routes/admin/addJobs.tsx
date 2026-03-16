@@ -1,33 +1,19 @@
 import type { ActionFunction, LoaderFunctionArgs } from "react-router";
 import { NavLink, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
-import { UserRepository } from "../repositories/UserRepositories";
-import { CautionPopup } from "~/component/CautionPopup";
 import { JobRepositories } from "../repositories/JobRepositories";
+import { CautionPopup } from "~/component/CautionPopup";
+import { requireAdmin, getAccessToken } from "../../lib/auth";
+import type { CreateJob } from "../models/Job";
 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    await requireAdmin(request);
+    return null;
+};
 
 export const action: ActionFunction = async ({ request }) => {
-    const cookieHeader = request.headers.get("Cookie");
-    let accessToken = "";
-    if (cookieHeader) {
-        const cookies = Object.fromEntries(
-            cookieHeader.split("; ").map((c) => {
-                const [key, ...v] = c.split("=");
-                return [key, v.join("=")];
-            }),
-        );
-        accessToken = cookies["access_token"];
-    }
-
-    if (!accessToken) {
-        return { message: "Unauthorized", error: "Unauthorized", data: null };
-    }
-
-    const user = await UserRepository.getUser(accessToken);
-    if (!user || user.role !== "admin") {
-        // Only Admin can add course (optional check if you have role)
-        // return { message: "Unauthorized", error: "Unauthorized", data: null };
-    }
+    await requireAdmin(request);
+    const accessToken = getAccessToken(request) || "";
 
     const formData = await request.formData();
     const name = formData.get("name") as string;
@@ -46,12 +32,12 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     const jobRepository = new JobRepositories();
-    const newJob: import("../models/Job").Job = {
+    const newJob: CreateJob = {
         name: name,
         details: details,
-    } as any;
+    };
 
-    const createdJob = await jobRepository.CreateJob(newJob);
+    const createdJob = await jobRepository.CreateJob(newJob, accessToken);
 
     if (!createdJob) {
         return {

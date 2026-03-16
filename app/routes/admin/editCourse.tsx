@@ -2,10 +2,12 @@ import type { ActionFunction, LoaderFunctionArgs } from "react-router";
 import { NavLink, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import { CourseRepositories } from "../repositories/CourseRepositories";
-import { UserRepository } from "../repositories/UserRepositories";
 import { CautionPopup } from "~/component/CautionPopup";
+import { requireAdmin, getAccessToken } from "../../lib/auth";
+import type { Course, UpdateCourse } from "../models/Course";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+    await requireAdmin(request);
     const courseId = params.courseId;
     if (!courseId) {
         throw new Response("Course ID Not Found", { status: 404 });
@@ -18,27 +20,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     return { course };
 };
 export const action: ActionFunction = async ({ request }) => {
-    const cookieHeader = request.headers.get("Cookie");
-    let accessToken = "";
-    if (cookieHeader) {
-        const cookies = Object.fromEntries(
-            cookieHeader.split("; ").map((c) => {
-                const [key, ...v] = c.split("=");
-                return [key, v.join("=")];
-            }),
-        );
-        accessToken = cookies["access_token"];
-    }
-
-    if (!accessToken) {
-        return { message: "Unauthorized", error: "Unauthorized", data: null };
-    }
-
-    const user = await UserRepository.getUser(accessToken);
-    if (!user || user.role !== "admin") {
-        // Only Admin can add course (optional check if you have role)
-        // return { message: "Unauthorized", error: "Unauthorized", data: null };
-    }
+    await requireAdmin(request);
+    const accessToken = getAccessToken(request) || "";
 
     const formData = await request.formData();
     const id = formData.get("id") as string;
@@ -68,17 +51,16 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     const courseRepository = new CourseRepositories();
-    const newCourse: import("../models/Course").Course = {
-        id: id,
+    const updatedCourseData: UpdateCourse = {
         nameTh: nameTh,
         nameEn: nameEn,
         description: description,
         credits: credits,
         year: year,
         category: category,
-    } as any;
+    };
 
-    const updatedCourse = await courseRepository.UpdateCourse(id, newCourse);
+    const updatedCourse = await courseRepository.UpdateCourse(id, updatedCourseData, accessToken);
 
     if (!updatedCourse) {
         return {

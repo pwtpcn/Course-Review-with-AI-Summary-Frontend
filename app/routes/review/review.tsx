@@ -7,7 +7,8 @@ import { CourseSearchBar } from "~/component/CourseSearchBar";
 
 export const loader = async () => {
   const reviewRepository = new ReviewRepositories();
-  const reviews = await reviewRepository.GetAllReviews("newest");
+  const reviews = await reviewRepository.GetAllReviews({ sortBy: "newest" });
+
   return { reviews };
 };
 

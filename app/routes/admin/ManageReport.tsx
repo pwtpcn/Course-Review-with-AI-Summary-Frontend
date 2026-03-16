@@ -8,15 +8,17 @@ import { AdminNavBar } from "../../component/AdminNavBar";
 import type { Report, ReportFilter } from "../models/Report";
 import type { Review } from "../models/Review";
 import type { User } from "../models/User";
+import { requireAdmin, getAccessToken } from "../../lib/auth";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const user = await requireAdmin(request);
+
     const url = new URL(request.url);
     const search = url.searchParams.get("search") || undefined;
     const statusRaw = url.searchParams.get("status");
     const status = (statusRaw && statusRaw !== "all") ? statusRaw : undefined;
     const sortBy = (url.searchParams.get("sortBy") || "newest") as ReportFilter["sortBy"];
 
-    // Send only status + sortBy to backend (search includes username which needs post-fetch)
     const filter: ReportFilter = {
         status: status as ReportFilter["status"],
         sortBy,
@@ -49,36 +51,26 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         }
     }
 
-    return { reports: reportsWithData, search: search ?? "", statusFilter: status ?? "all", sortBy };
+    return { reports: reportsWithData, search: search ?? "", statusFilter: status ?? "all", sortBy, user };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+    await requireAdmin(request);
+    const token = getAccessToken(request) || "";
+
     const formData = await request.formData();
     const intent = formData.get("intent");
     const reportId = formData.get("reportId") as string;
     const reviewId = formData.get("reviewId") as string;
-
-    // We need the admin token to approve/cancel reports
-    const cookieHeader = request.headers.get("Cookie");
-    const token = cookieHeader
-        ?.split(";")
-        .find((c) => c.trim().startsWith("access_token="))
-        ?.split("=")[1];
-
-    if (!token) {
-        return { error: "Unauthorized" };
-    }
 
     const reportRepository = new ReportRepositories();
     const reviewRepository = new ReviewRepositories();
 
     try {
         if (intent === "reject_report") {
-            // Keeps the review, rejects the report
             await reportRepository.CancelReport(reportId, token);
             return { success: true, message: "Report rejected. Review kept." };
         } else if (intent === "accept_report") {
-            // Approves the report, hides the review
             await reportRepository.ApproveReport(reportId, token);
             await reviewRepository.HideReview(reviewId, token);
             return { success: true, message: "Report accepted. Review hidden." };

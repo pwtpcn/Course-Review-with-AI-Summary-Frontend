@@ -15,6 +15,9 @@ export function AdminNavBar() {
       </div>
 
       <div className="flex items-center gap-6 md:gap-18">
+        <NavLink to="/" className={linkClasses} end>
+          Home
+        </NavLink>
         <NavLink to="/admin/reviewManage" className={linkClasses}>
           Review
         </NavLink>

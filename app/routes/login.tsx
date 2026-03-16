@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ActionFunction } from "react-router";
 import { NavLink, useFetcher, redirect } from "react-router";
 import { supabase } from "../lib/supabase";
+import { UserRepository } from "./repositories/UserRepositories";
 
 interface ActionMessage {
   message: string;
@@ -35,13 +36,10 @@ export const action: ActionFunction = async ({ request }) => {
     return actionMessage;
   }
 
-  // console.log("Login successful, session:", data.session);
-  // console.log(
-  //   "Setting cookie:",
-  //   `access_token=${data.session.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${data.session.expires_in}`,
-  // );
+  const user = await UserRepository.getUser(data.session.access_token);
+  const redirectPath = user?.role === "admin" ? "/admin/reviewManage" : "/review";
 
-  return redirect("/review", {
+  return redirect(redirectPath, {
     headers: {
       "Set-Cookie": `access_token=${data.session.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${data.session.expires_in}`,
     },

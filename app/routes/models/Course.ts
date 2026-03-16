@@ -12,6 +12,11 @@ export interface Course {
   updatedAt: Date;
 }
 
+export type CreateCourse = Omit<
+  Course,
+  "rating" | "reviewCount" | "createdAt" | "updatedAt"
+>;
+
 export type UpdateCourse = Partial<
   Omit<Course, "id" | "createdAt" | "updatedAt">
 >;

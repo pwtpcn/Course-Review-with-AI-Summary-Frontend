@@ -34,12 +34,13 @@ export class JobRepositories {
     }
   }
 
-  public async CreateJob(job: CreateJob): Promise<Job | null> {
+  public async CreateJob(job: CreateJob, accessToken: string): Promise<Job | null> {
     const BACKEND_URL = process.env.BACKEND_URL;
     try {
       const res = await fetch(`${BACKEND_URL}/job/create`, {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(job),
@@ -57,13 +58,15 @@ export class JobRepositories {
 
   public async UpdateJob(
     id: string,
-    job: UpdateJob | Partial<Job>,
+    job: UpdateJob,
+    accessToken: string,
   ): Promise<Job | null> {
     const BACKEND_URL = process.env.BACKEND_URL;
     try {
       const res = await fetch(`${BACKEND_URL}/job/update/${id}`, {
         method: "PUT",
         headers: {
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(job),
@@ -79,11 +82,15 @@ export class JobRepositories {
     }
   }
 
-  public async DeleteJob(id: string): Promise<Job | null> {
+  public async DeleteJob(id: string, accessToken: string): Promise<Job | null> {
     const BACKEND_URL = process.env.BACKEND_URL;
     try {
       const res = await fetch(`${BACKEND_URL}/job/delete/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
       });
       if (!res.ok) {
         throw new Error("Failed to delete job");

@@ -33,6 +33,11 @@ export function Navbar() {
         <NavLink to="/jobs" className={linkClasses}>
           Jobs
         </NavLink>
+        {user?.role === "admin" && (
+          <NavLink to="/admin/reviewManage" className={linkClasses}>
+            Admin
+          </NavLink>
+        )}
         <nav className="gap-5 flex">
           {user ? (
             <fetcher.Form method="post" action="/logout">

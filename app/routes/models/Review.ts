@@ -30,6 +30,8 @@ export interface CreateReview {
   testPrepare?: string;
 }
 
+export type UpdateReview = Omit<CreateReview, "courseId">;
+
 export interface ReviewSummary {
   content: string;
   pros: string[];

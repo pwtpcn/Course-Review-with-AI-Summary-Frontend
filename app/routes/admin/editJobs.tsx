@@ -1,12 +1,14 @@
 import type { ActionFunction, LoaderFunctionArgs } from "react-router";
 import { NavLink, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
-import { UserRepository } from "../repositories/UserRepositories";
 import { CautionPopup } from "~/component/CautionPopup";
 import { JobRepositories } from "../repositories/JobRepositories";
 import type { Job } from "../models/Job";
+import { requireAdmin, getAccessToken } from "../../lib/auth";
+import type { UpdateJob } from "../models/Job";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  await requireAdmin(request);
   const jobId = params.jobId;
   if (!jobId) {
     throw new Response("Job ID Not Found", { status: 404 });
@@ -20,27 +22,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const cookieHeader = request.headers.get("Cookie");
-  let accessToken = "";
-  if (cookieHeader) {
-    const cookies = Object.fromEntries(
-      cookieHeader.split("; ").map((c) => {
-        const [key, ...v] = c.split("=");
-        return [key, v.join("=")];
-      }),
-    );
-    accessToken = cookies["access_token"];
-  }
-
-  if (!accessToken) {
-    return { message: "Unauthorized", error: "Unauthorized", data: null };
-  }
-
-  const user = await UserRepository.getUser(accessToken);
-  if (!user || user.role !== "admin") {
-    // Only Admin can add course (optional check if you have role)
-    // return { message: "Unauthorized", error: "Unauthorized", data: null };
-  }
+  await requireAdmin(request);
+  const accessToken = getAccessToken(request) || "";
 
   const formData = await request.formData();
   const jobId = request.url.split("/").pop(); // Or passed via hidden input
@@ -60,12 +43,12 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const jobRepository = new JobRepositories();
-  const newJob: Partial<Job> = {
+  const updatedJobData: UpdateJob = {
     name: name,
     details: details,
   };
 
-  const updateJob = await jobRepository.UpdateJob(jobId as string, newJob);
+  const updateJob = await jobRepository.UpdateJob(jobId as string, updatedJobData, accessToken);
 
   if (!updateJob) {
     return {
