@@ -58,7 +58,7 @@ export default function ReviewManage() {
 
     const handleQuickDelete = (e: React.MouseEvent, review: Review) => {
         e.stopPropagation();
-        if (!confirm(`ต้องการลบรีวิวนี้ใช่หรือไม่?`)) return;
+        if (!confirm(`หากลบแล้วจะไม่สามารถกู้คืนข้อมูล คุณต้องการลบรีวิวนี้ใช่หรือไม่?`)) return;
         fetcher.submit(
             { intent: "delete", reviewId: review.id, accessToken: "" },
             { method: "post" }

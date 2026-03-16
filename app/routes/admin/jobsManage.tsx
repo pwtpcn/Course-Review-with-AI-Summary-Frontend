@@ -1,9 +1,9 @@
-import { type LoaderFunctionArgs, useLoaderData } from "react-router";
+import { type ActionFunctionArgs, type LoaderFunctionArgs, useLoaderData } from "react-router";
 import { JobRepositories } from "../repositories/JobRepositories";
 import type { Job } from "../models/Job";
 import { AdminNavBar } from "../../component/AdminNavBar";
-import { NavLink } from "react-router";
-import { requireAdmin } from "../../lib/auth";
+import { NavLink, useFetcher } from "react-router";
+import { getAccessToken, requireAdmin } from "../../lib/auth";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     await requireAdmin(request);
@@ -13,8 +13,35 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return { jobs };
 };
 
+export const action = async ({ request }: ActionFunctionArgs) => {
+    await requireAdmin(request);
+    const accessToken = getAccessToken(request) || "";
+
+    const formData = await request.formData();
+    const jobId = formData.get("jobId");
+    const intent = formData.get("intent");
+
+    if (intent === "delete" && jobId && accessToken) {
+        const jobRepository = new JobRepositories();
+        const ok = await jobRepository.DeleteJob(jobId.toString(), accessToken);
+        return { ok, intent };
+    }
+
+    return { ok: false, intent };
+};
+
 export default function JobsManage() {
     const { jobs } = useLoaderData<typeof loader>();
+    const fetcher = useFetcher();
+
+    const handleQuickDelete = (e: React.MouseEvent, job: Job) => {
+        e.stopPropagation();
+        if (!confirm(`หากลบแล้วจะไม่สามารถกู้คืนข้อมูล คุณต้องการลบอาชีพนี้ใช่หรือไม่?`)) return;
+        fetcher.submit(
+            { intent: "delete", jobId: job.id, accessToken: "" },
+            { method: "post" }
+        );
+    };
 
     return (
         <div className="min-h-screen bg-black text-white font-['Press_Start_2P'] relative flex flex-col">
@@ -76,6 +103,7 @@ export default function JobsManage() {
                                                     <button
                                                         type="button"
                                                         className="text-gray-light"
+                                                        title="Edit Job"
                                                     >
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v10" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10.4 12.6a2 2 0 1 1 3 3L8 21l-4 1 1-4Z" /></svg>
                                                     </button>
@@ -84,7 +112,9 @@ export default function JobsManage() {
                                             <td className="p-4 text-center">
                                                 <button
                                                     type="button"
+                                                    onClick={(e) => handleQuickDelete(e, job)}
                                                     className="text-danger"
+                                                    title="Delete Job"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
                                                 </button>
