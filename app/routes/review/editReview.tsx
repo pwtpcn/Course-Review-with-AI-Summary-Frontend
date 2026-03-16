@@ -5,35 +5,15 @@ import { redirect } from "react-router";
 import { Heart } from "lucide-react";
 import { CourseRepositories } from "../repositories/CourseRepositories";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
-import { UserRepository } from "../repositories/UserRepositories";
+import { requireUser, getAccessToken } from "../../lib/auth";
 import type { UpdateReview } from "../models/Review";
 import { CautionPopup } from "~/component/CautionPopup";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const user = await requireUser(request);
   const reviewId = params.reviewId;
   if (!reviewId) {
     throw new Response("Review ID Not Found", { status: 404 });
-  }
-
-  const cookieHeader = request.headers.get("Cookie");
-  let accessToken = "";
-  if (cookieHeader) {
-    const cookies = Object.fromEntries(
-      cookieHeader.split("; ").map((c) => {
-        const [key, ...v] = c.split("=");
-        return [key, v.join("=")];
-      }),
-    );
-    accessToken = cookies["access_token"];
-  }
-
-  if (!accessToken) {
-    throw new Response("Unauthorized", { status: 401 });
-  }
-
-  const user = await UserRepository.getUser(accessToken);
-  if (!user) {
-    throw new Response("User not found", { status: 404 });
   }
 
   const courseRepository = new CourseRepositories();
@@ -64,6 +44,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  const user = await requireUser(request);
+  const accessToken = getAccessToken(request) || "";
   const reviewId = params.reviewId;
   if (!reviewId) {
     return {
@@ -71,27 +53,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       error: "Review ID missing",
       data: null,
     };
-  }
-
-  const cookieHeader = request.headers.get("Cookie");
-  let accessToken = "";
-  if (cookieHeader) {
-    const cookies = Object.fromEntries(
-      cookieHeader.split("; ").map((c) => {
-        const [key, ...v] = c.split("=");
-        return [key, v.join("=")];
-      }),
-    );
-    accessToken = cookies["access_token"];
-  }
-
-  if (!accessToken) {
-    return { message: "Unauthorized", error: "Unauthorized", data: null };
-  }
-
-  const user = await UserRepository.getUser(accessToken);
-  if (!user) {
-    return { message: "User not found", error: "User not found", data: null };
   }
 
   const reviewRepository = new ReviewRepositories();

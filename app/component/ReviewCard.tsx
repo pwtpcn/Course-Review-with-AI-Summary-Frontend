@@ -148,7 +148,7 @@ export const ReviewCard = ({
               <button
                 className="text-red-500 hover:text-red-400 text-xs md:text-sm flex items-center gap-1 transition-colors cursor-pointer"
                 onClick={() => {
-                  if (window.confirm("คุณต้องการลบรีวิวนี้ใช่หรือไม่?")) {
+                  if (window.confirm("หากลบแล้วจะไม่สามารถกู้คืนข้อมูล คุณต้องการลบรีวิวนี้ใช่หรือไม่?")) {
                     const formData = new FormData();
                     formData.append("reviewId", data.id);
                     deleteFetcher.submit(formData, {

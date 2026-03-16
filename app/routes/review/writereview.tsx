@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { CourseRepositories } from "../repositories/CourseRepositories";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
-import { UserRepository } from "../repositories/UserRepositories";
+import { requireUser, getAccessToken } from "../../lib/auth";
 import type { CreateReview } from "../models/Review";
 import { CautionPopup } from "~/component/CautionPopup";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  await requireUser(request);
   const courseId = params.courseId;
   if (!courseId) {
     throw new Response("Course ID Not Found", { status: 404 });
@@ -25,6 +26,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  await requireUser(request);
+  const accessToken = getAccessToken(request) || "";
   const courseId = params.courseId;
   if (!courseId) {
     return {
@@ -32,27 +35,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       error: "Course ID missing",
       data: null,
     };
-  }
-
-  const cookieHeader = request.headers.get("Cookie");
-  let accessToken = "";
-  if (cookieHeader) {
-    const cookies = Object.fromEntries(
-      cookieHeader.split("; ").map((c) => {
-        const [key, ...v] = c.split("=");
-        return [key, v.join("=")];
-      }),
-    );
-    accessToken = cookies["access_token"];
-  }
-
-  if (!accessToken) {
-    return { message: "Unauthorized", error: "Unauthorized", data: null };
-  }
-
-  const user = await UserRepository.getUser(accessToken);
-  if (!user) {
-    return { message: "User not found", error: "User not found", data: null };
   }
 
   const formData = await request.formData();

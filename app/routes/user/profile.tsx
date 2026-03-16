@@ -3,30 +3,10 @@ import { ReviewRepositories } from "../repositories/ReviewRepositories";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { ReviewCard } from "~/component/ReviewCard";
 import type { Review } from "../models/Review";
-import { CourseSearchBar } from "~/component/CourseSearchBar";
-import { UserRepository } from "../repositories/UserRepositories";
+import { requireUser } from "../../lib/auth";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const cookieHeader = request.headers.get("Cookie");
-  let accessToken = "";
-  if (cookieHeader) {
-    const cookies = Object.fromEntries(
-      cookieHeader.split("; ").map((c) => {
-        const [key, ...v] = c.split("=");
-        return [key, v.join("=")];
-      }),
-    );
-    accessToken = cookies["access_token"];
-  }
-
-  if (!accessToken) {
-    throw new Response("Unauthorized", { status: 401 });
-  }
-
-  const user = await UserRepository.getUser(accessToken);
-  if (!user) {
-    throw new Response("User not found", { status: 404 });
-  }
+  const user = await requireUser(request);
 
   const reviewRepository = new ReviewRepositories();
   const reviews = await reviewRepository.GetReviewByUserId(user.id, "newest");
