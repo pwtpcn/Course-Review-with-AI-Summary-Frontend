@@ -1,15 +1,15 @@
-import type { CreateReview, Review } from "../models/Review";
+import type { CreateReview, Review, ReviewFilter } from "../models/Review";
 
 export class ReviewRepositories {
   public async GetAllReviews(
-    sortBy?: "newest" | "oldest",
-    includeHidden = "false",
+    filter?: ReviewFilter,
   ): Promise<Review[] | null> {
     const BACKEND_URL = process.env.BACKEND_URL;
     const queryParams = new URLSearchParams();
 
-    if (sortBy) queryParams.append("sortBy", sortBy);
-    if (includeHidden) queryParams.append("includeHidden", includeHidden);
+    if (filter?.status) queryParams.append("status", filter.status);
+    if (filter?.sortBy) queryParams.append("sortBy", filter.sortBy);
+    if (filter?.search) queryParams.append("search", filter.search);
 
     try {
       const res = await fetch(

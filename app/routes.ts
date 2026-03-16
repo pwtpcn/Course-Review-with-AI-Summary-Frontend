@@ -33,4 +33,5 @@ export default [
   route("/admin/addJob", "routes/admin/addJobs.tsx"),
   route("/admin/editJob/:jobId", "routes/admin/editJobs.tsx"),
   route("/admin/editCourse/:courseId", "routes/admin/editCourse.tsx"),
+  route("/admin/reviewManage", "routes/admin/reviewManage.tsx"),
 ] satisfies RouteConfig;

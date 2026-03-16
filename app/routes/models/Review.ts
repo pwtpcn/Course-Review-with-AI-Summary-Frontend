@@ -37,3 +37,9 @@ export interface ReviewSummary {
   rating: number;
   testPrepare?: string[];
 }
+
+export interface ReviewFilter {
+  search?: string;
+  status?: "active" | "hidden";
+  sortBy?: "newest" | "oldest";
+}
