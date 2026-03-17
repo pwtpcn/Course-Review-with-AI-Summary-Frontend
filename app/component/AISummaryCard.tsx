@@ -2,9 +2,10 @@ import type { ReviewSummary } from "~/routes/models/Review";
 
 interface AISummaryCardProps {
   aiSummary?: ReviewSummary | null;
+  rating: number;
 }
 
-export function AISummaryCard({ aiSummary }: AISummaryCardProps) {
+export function AISummaryCard({ aiSummary, rating }: AISummaryCardProps) {
   return (
     <>
       <div className="w-full">
@@ -14,7 +15,7 @@ export function AISummaryCard({ aiSummary }: AISummaryCardProps) {
       </div>
       <div className="w-full mb-12 border-3 border-[#001dae] p-4 relative">
         <div className="btn-ai-summarize-cards p-6 text-[#FCFC00] text-sm sm:text-sm md:text-md lg:text-lg leading-loose font-chakra-petch ">
-          {aiSummary && aiSummary.rating !== 0 ? (
+          {aiSummary && rating !== 0 ? (
             <div className="grid gap-4">
               <div>
                 <span className="font-['Press_Start_2P']">Content :</span>{" "}
@@ -22,7 +23,7 @@ export function AISummaryCard({ aiSummary }: AISummaryCardProps) {
               </div>
               <div>
                 <span className="font-['Press_Start_2P']">Hard Level :</span>{" "}
-                <span className="text-white">{aiSummary.rating}</span>
+                <span className="text-white">{rating.toFixed(1)}</span>
               </div>
               <div>
                 <span className="font-['Press_Start_2P']">

@@ -118,7 +118,7 @@ export default function SubjectReview() {
         {aiSummary === undefined ? (
           <AISummaryCardSkeleton />
         ) : (
-          <AISummaryCard aiSummary={aiSummary} />
+          <AISummaryCard aiSummary={aiSummary} rating={course.rating} />
         )}
 
         {/* All Reviews Section */}
