@@ -3,55 +3,32 @@ import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import { useLoaderData, useFetcher, Form } from "react-router";
 import { ReportRepositories } from "../repositories/ReportRepositories";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
-import { UserRepository } from "../repositories/UserRepositories";
 import { AdminNavBar } from "../../component/AdminNavBar";
 import type { Report, ReportFilter } from "../models/Report";
-import type { Review } from "../models/Review";
-import type { User } from "../models/User";
 import { requireAdmin, getAccessToken } from "../../lib/auth";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     const user = await requireAdmin(request);
 
     const url = new URL(request.url);
-    const search = url.searchParams.get("search") || undefined;
+    const search = url.searchParams.get("search")?.trim() || undefined;
     const statusRaw = url.searchParams.get("status");
     const status = (statusRaw && statusRaw !== "all") ? statusRaw : undefined;
     const sortBy = (url.searchParams.get("sortBy") || "newest") as ReportFilter["sortBy"];
+    const reasonRaw = url.searchParams.get("reason");
+    const reason = (reasonRaw && reasonRaw !== "all") ? reasonRaw : undefined;
 
     const filter: ReportFilter = {
+        search,
         status: status as ReportFilter["status"],
         sortBy,
+        reason: reason as ReportFilter["reason"],
     };
 
     const reportRepository = new ReportRepositories();
-    const reviewRepository = new ReviewRepositories();
-    const userRepository = new UserRepository();
     const reports = await reportRepository.GetAllReports(filter);
 
-    let reportsWithData: (Report & { review?: Review | null; reporter?: User | null })[] = [];
-    if (reports) {
-        reportsWithData = await Promise.all(
-            reports.map(async (report) => {
-                const [review, reporter] = await Promise.all([
-                    reviewRepository.GetReviewById(report.reviewId),
-                    userRepository.getUserById(report.userId),
-                ]);
-                return { ...report, review, reporter };
-            })
-        );
-
-        // Post-fetch filter: match search against IDs and username
-        if (search) {
-            reportsWithData = reportsWithData.filter((report) =>
-                report.id.includes(search)
-                || report.reviewId.includes(search)
-                || report.reporter?.username?.includes(search)
-            );
-        }
-    }
-
-    return { reports: reportsWithData, search: search ?? "", statusFilter: status ?? "all", sortBy, user };
+    return { reports, search, status, sortBy, reason, user };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -84,7 +61,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function ManageReport() {
-    const { reports, search, statusFilter } = useLoaderData<typeof loader>();
+    const { reports, search, status, sortBy, reason } = useLoaderData<typeof loader>();
     const fetcher = useFetcher();
     const [expandedReports, setExpandedReports] = useState<Set<string>>(new Set());
 
@@ -133,18 +110,47 @@ export default function ManageReport() {
                             />
                         </div>
                         
-                        <div className="w-full md:w-64 space-y-2">
+                        <div className="w-full md:w-40 space-y-2">
                             <label htmlFor="status" className="text-xs text-gray-400">Status</label>
                             <select
                                 name="status"
                                 id="status"
-                                defaultValue={statusFilter}
+                                defaultValue={status}
                                 className="w-full bg-black border border-[#2A2A2A] rounded-lg p-3 text-white font-chakra-petch focus:outline-none focus:border-[#1BE1F3] text-xs appearance-none"
                             >
                                 <option value="all">All Statuses</option>
-                                <option value="pending">Pending Only</option>
-                                <option value="approved">Approved Only</option>
-                                <option value="rejected">Rejected Only</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+
+                        <div className="w-full md:w-40 space-y-2">
+                            <label htmlFor="reason" className="text-xs text-gray-400">Reason</label>
+                            <select
+                                name="reason"
+                                id="reason"
+                                defaultValue={reason}
+                                className="w-full bg-black border border-[#2A2A2A] rounded-lg p-3 text-white font-chakra-petch focus:outline-none focus:border-[#1BE1F3] text-xs appearance-none"
+                            >
+                                <option value="all">All Reasons</option>
+                                <option value="spam">Spam</option>
+                                <option value="inappropriate">Inappropriate</option>
+                                <option value="irrelevant">Irrelevant</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div className="w-full md:w-40 space-y-2">
+                            <label htmlFor="sortBy" className="text-xs text-gray-400">Sort By</label>
+                            <select
+                                name="sortBy"
+                                id="sortBy"
+                                defaultValue={sortBy}
+                                className="w-full bg-black border border-[#2A2A2A] rounded-lg p-3 text-white font-chakra-petch focus:outline-none focus:border-[#1BE1F3] text-xs appearance-none"
+                            >
+                                <option value="newest">Newest</option>
+                                <option value="oldest">Oldest</option>
                             </select>
                         </div>
 
@@ -165,34 +171,34 @@ export default function ManageReport() {
                             No reports found.
                         </div>
                     ) : (
-                        reports.map((report: Report & { review?: Review | null; reporter?: User | null }) => (
-                            <div
-                                key={report.id}
-                                className={`bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl overflow-hidden ${report.status !== 'pending' ? 'opacity-50' : ''}`}
+                    reports.map((report: Report) => (
+                        <div
+                            key={report.id}
+                            className={`bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl overflow-hidden ${report.status !== 'pending' ? 'opacity-50' : ''}`}
+                        >
+                            {/* --- Collapsed Header View (Always Visible) --- */}
+                            <div 
+                                onClick={() => toggleExpand(report.id)}
+                                className="p-4 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer hover:bg-[#111] transition-colors gap-4"
                             >
-                                {/* --- Collapsed Header View (Always Visible) --- */}
-                                <div 
-                                    onClick={() => toggleExpand(report.id)}
-                                    className="p-4 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer hover:bg-[#111] transition-colors gap-4"
-                                >
-                                    {/* Left Side: IDs and Reason */}
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-xs text-[#1BE1F3] w-24">Report ID:</span>
-                                            <span className="text-sm text-white font-chakra-petch tracking-wide">{report.id}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-xs text-[#1BE1F3] w-24">Review ID:</span>
-                                            <span className="text-sm text-white font-chakra-petch tracking-wide">{report.reviewId}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-xs text-[#1BE1F3] w-24">Reporter:</span>
-                                            <span className="text-sm text-[#FCFC00] font-chakra-petch">
-                                                {report.reporter?.username ?? (
-                                                    <span className="text-gray-500 italic">Unknown</span>
-                                                )}
-                                            </span>
-                                        </div>
+                                {/* Left Side: IDs and Reason */}
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs text-[#1BE1F3] w-24">Report ID:</span>
+                                        <span className="text-sm text-white font-chakra-petch tracking-wide">{report.id}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs text-[#1BE1F3] w-24">Review ID:</span>
+                                        <span className="text-sm text-white font-chakra-petch tracking-wide">{report.reviewId}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs text-[#1BE1F3] w-24">Reporter:</span>
+                                        <span className="text-sm text-[#FCFC00] font-chakra-petch">
+                                            {report.user?.username ?? (
+                                                <span className="text-gray-500 italic">Unknown</span>
+                                            )}
+                                        </span>
+                                    </div>
                                         <div className="flex items-center gap-3 mt-2">
                                             <span className="text-xs text-[#FCFC00] w-24">Reason:</span>
                                             <span className="text-sm text-white font-chakra-petch uppercase">{report.reason}</span>

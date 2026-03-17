@@ -1,3 +1,4 @@
+import { Heart } from "lucide-react";
 import { Link } from "react-router";
 import type { Course } from "~/routes/models/Course";
 
@@ -36,7 +37,7 @@ export const CourseCard = ({
               : "-"}
             /5
           </span>
-          <span className="text-[#B91313] text-lg">♥</span>
+          <Heart className="text-[#B91313] text-lg" fill="#B91313" />
         </div>
       </div>
     </Link>
