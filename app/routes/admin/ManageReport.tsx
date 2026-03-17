@@ -3,6 +3,7 @@ import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import { useLoaderData, useFetcher, Form } from "react-router";
 import { ReportRepositories } from "../repositories/ReportRepositories";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
+import { CourseRepositories } from "../repositories/CourseRepositories";
 import { AdminNavBar } from "../../component/AdminNavBar";
 import type { Report, ReportFilter } from "../models/Report";
 import { requireAdmin, getAccessToken } from "../../lib/auth";
@@ -50,6 +51,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         } else if (intent === "accept_report") {
             await reportRepository.ApproveReport(reportId, token);
             await reviewRepository.HideReview(reviewId, token);
+            
+            const review = await reviewRepository.GetReviewById(reviewId);
+            if (!review) {
+                return { error: "Review not found" };
+            }
+            const courseRepo = new CourseRepositories();
+            await courseRepo.RecalculateCourseRating(review.courseId);
+
             return { success: true, message: "Report accepted. Review hidden." };
         }
     } catch (e: any) {

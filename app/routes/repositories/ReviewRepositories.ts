@@ -170,6 +170,7 @@ export class ReviewRepositories {
       return false;
     }
   }
+
   public async HideReview(id: string, accessToken: string): Promise<boolean> {
     const BACKEND_URL = process.env.BACKEND_URL;
     try {
@@ -186,6 +187,26 @@ export class ReviewRepositories {
       return true;
     } catch (e) {
       console.error("Failed to hide review:", e);
+      return false;
+    }
+  }
+
+  public async UnhideReview(id: string, accessToken: string): Promise<boolean> {
+    const BACKEND_URL = process.env.BACKEND_URL;
+    try {
+      const res = await fetch(`${BACKEND_URL}/review/unhide/${id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) {
+        throw new Error("Failed to unhide review");
+      }
+      return true;
+    } catch (e) {
+      console.error("Failed to unhide review:", e);
       return false;
     }
   }

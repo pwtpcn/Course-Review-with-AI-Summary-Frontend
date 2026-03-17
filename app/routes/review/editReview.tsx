@@ -134,6 +134,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     };
   }
 
+  const courseRepo = new CourseRepositories();
+  await courseRepo.RecalculateCourseRating(existingReview.courseId);
+
   return redirect("/user/profile");
 };
 

@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs } from "react-router";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
+import { CourseRepositories } from "../repositories/CourseRepositories";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const cookieHeader = request.headers.get("Cookie");
@@ -30,11 +31,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   const reviewRepository = new ReviewRepositories();
+  const courseRepository = new CourseRepositories();
   try {
+    const review = await reviewRepository.GetReviewById(reviewId);
+    if (!review) {
+      return Response.json({ error: "Review not found" }, { status: 404 });
+    }
+
     const success = await reviewRepository.DeleteReview(reviewId, accessToken);
     if (!success) {
       throw new Error("Failed to delete review");
     }
+
+    await courseRepository.RecalculateCourseRating(review.courseId);
+
     return Response.json({ success: true, action: "delete" });
   } catch (error: any) {
     return Response.json(
