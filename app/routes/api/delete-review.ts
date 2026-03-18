@@ -1,20 +1,10 @@
 import type { ActionFunctionArgs } from "react-router";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
 import { CourseRepositories } from "../repositories/CourseRepositories";
+import { getAccessToken } from "~/lib/auth";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const cookieHeader = request.headers.get("Cookie");
-  let accessToken = "";
-
-  if (cookieHeader) {
-    const cookies = Object.fromEntries(
-      cookieHeader.split("; ").map((c) => {
-        const [key, ...v] = c.split("=");
-        return [key, v.join("=")];
-      }),
-    );
-    accessToken = cookies["access_token"] || "";
-  }
+  const accessToken = getAccessToken(request);
 
   if (!accessToken) {
     return Response.json(

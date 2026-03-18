@@ -3,6 +3,7 @@ import { NavLink, useFetcher, useRouteLoaderData } from "react-router";
 import type { Review } from "~/routes/models/Review";
 import type { User } from "~/routes/models/User";
 import { ReportPopup } from "./ReportPopup";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 
 export const ReviewCard = ({
   data,
@@ -14,6 +15,7 @@ export const ReviewCard = ({
   const [isReportPopupOpen, setIsReportPopupOpen] = useState(false);
   const fetcher = useFetcher();
   const deleteFetcher = useFetcher();
+  const reactionFetcher = useFetcher();
   const rootData = useRouteLoaderData("root") as
     | { user: User | null }
     | undefined;
@@ -22,6 +24,10 @@ export const ReviewCard = ({
   // Check if current logged in user has already reported this review
   const hasReported =
     user && data.reports?.some((report) => report.userId === user.id);
+
+  // Check the current logged in user's reaction
+  const userReaction =
+    user && data.reactions?.find((reaction) => reaction.userId === user.id)?.type;
 
   useEffect(() => {
     if (
@@ -55,6 +61,32 @@ export const ReviewCard = ({
       alert(`Error: ${(deleteFetcher.data as any).error}`);
     }
   }, [deleteFetcher.data, deleteFetcher.state]);
+
+  useEffect(() => {
+    if (
+      reactionFetcher.data &&
+      (reactionFetcher.data as any).error &&
+      reactionFetcher.state === "idle"
+    ) {
+      alert(`Error: ${(reactionFetcher.data as any).error}`);
+    }
+  }, [reactionFetcher.data, reactionFetcher.state]);
+
+  const handleToggleReaction = (type: "like" | "dislike") => {
+    if (!user) {
+      alert("กรุณาเข้าสู่ระบบก่อนทำการถูกใจหรือเลิกถูกใจรีวิว");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("reviewId", data.id);
+    formData.append("type", type);
+
+    reactionFetcher.submit(formData, {
+      method: "post",
+      action: "/api/toggle-reaction",
+    });
+  };
 
   const borderColor = "border-[#1BE1F3]";
   const headerBg = "bg-[#1BE1F3]";
@@ -94,7 +126,24 @@ export const ReviewCard = ({
             <span className="text-white font-chakra-petch">{data.cons}</span>
           </div>
         </div>
-        <div className="mt-6 flex justify-end">
+
+        <div className="mt-6 flex justify-end items-center">
+          <div className="flex items-center gap-2 mr-auto">
+            <div
+              className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors"
+              onClick={() => handleToggleReaction("like")}
+            >
+              <ThumbsUp strokeWidth={2} stroke={userReaction === "like" ? "#1f7535" : "white"} fill={userReaction === "like" ? "#1cb041" : "none"} />
+              <span>{data.like}</span>
+            </div>
+            <div
+              className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors"
+              onClick={() => handleToggleReaction("dislike")}
+            >
+              <ThumbsDown strokeWidth={2} stroke={userReaction === "dislike" ? "#891a1a" : "white"} fill={userReaction === "dislike" ? "#da4949" : "none"} />
+              <span>{data.dislike}</span>
+            </div>
+          </div>
           {showManageActions ? (
             <div className="flex gap-4">
               {data.isEdited ? (
@@ -148,7 +197,11 @@ export const ReviewCard = ({
               <button
                 className="text-red-500 hover:text-red-400 text-xs md:text-sm flex items-center gap-1 transition-colors cursor-pointer"
                 onClick={() => {
-                  if (window.confirm("หากลบแล้วจะไม่สามารถกู้คืนข้อมูล คุณต้องการลบรีวิวนี้ใช่หรือไม่?")) {
+                  if (
+                    window.confirm(
+                      "หากลบแล้วจะไม่สามารถกู้คืนข้อมูล คุณต้องการลบรีวิวนี้ใช่หรือไม่?",
+                    )
+                  ) {
                     const formData = new FormData();
                     formData.append("reviewId", data.id);
                     deleteFetcher.submit(formData, {

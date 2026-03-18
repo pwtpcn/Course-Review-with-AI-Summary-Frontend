@@ -137,7 +137,7 @@ export default function ReviewManage() {
                                 name="search"
                                 id="search"
                                 defaultValue={search || ""}
-                                placeholder="Course ID, username, content..."
+                                placeholder="Course ID, User ID, content..."
                                 className="w-full bg-black border border-[#2A2A2A] rounded-lg p-3 text-white focus:outline-none focus:border-[#1BE1F3] text-xs font-chakra-petch"
                             />
                         </div>

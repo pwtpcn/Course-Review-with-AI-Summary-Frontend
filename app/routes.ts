@@ -21,6 +21,7 @@ export default [
   route("/api/search-courses", "routes/api/search-courses.ts"),
   route("/api/report-review", "routes/api/report-review.ts"),
   route("/api/delete-review", "routes/api/delete-review.ts"),
+  route("/api/toggle-reaction", "routes/api/toggle-reaction.ts"),
 
   //User
   route("/user/profile", "routes/user/profile.tsx"),

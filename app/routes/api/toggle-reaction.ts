@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs } from "react-router";
-import { ReportRepositories } from "../repositories/ReportRepositories";
+import { ReactionRepositories } from "../repositories/ReactionRepositories";
 import { getAccessToken } from "~/lib/auth";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -14,28 +14,26 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const formData = await request.formData();
   const reviewId = formData.get("reviewId") as string;
-  const reason = formData.get("reason") as string;
-  const content = formData.get("content") as string;
+  const type = formData.get("type") as "like" | "dislike";
 
-  if (!reviewId || !reason) {
+  if (!reviewId || !type) {
     return Response.json(
-      { error: "Review ID and reason are required" },
+      { error: "Review ID and type are required" },
       { status: 400 },
     );
   }
 
-  const reportRepository = new ReportRepositories();
+  const reactionRepository = new ReactionRepositories();
   try {
-    const report = await reportRepository.CreateReport(
+    const result = await reactionRepository.ToggleReaction(
       reviewId,
-      reason,
-      content,
+      type,
       accessToken,
     );
-    return Response.json({ success: true, report });
+    return Response.json({ success: true, ...result });
   } catch (error: any) {
     return Response.json(
-      { error: error.message || "Failed to create report" },
+      { error: error.message || "Failed to toggle reaction" },
       { status: 500 },
     );
   }

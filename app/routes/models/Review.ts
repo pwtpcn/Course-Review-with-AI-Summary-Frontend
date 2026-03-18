@@ -19,6 +19,7 @@ export interface Review {
   user?: User;
   course?: Course;
   reports?: any[];
+  reactions?: { userId: string; type: "like" | "dislike" }[];
 }
 
 export interface CreateReview {
