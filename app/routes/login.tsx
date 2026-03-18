@@ -57,19 +57,19 @@ export default function Login() {
     <div className="bg-[#000000] h-screen flex flex-col justify-center items-center overflow-auto">
       <fetcher.Form
         method="post"
-        className="flex flex-col justify-center items-center w-fit h-fit space-y-4 p-10 rounded-2xl "
+        className="flex flex-col justify-center items-center w-full max-w-[90%] sm:max-w-[400px] h-fit space-y-6 md:space-y-8 p-6 md:p-10 rounded-2xl"
       >
-        <div className="text-[#FCFC00] text-[48px] font-['Press_Start_2P'] uppercase">
+        <div className="text-[#FCFC00] text-[32px] md:text-[48px] font-['Press_Start_2P'] uppercase text-center mb-4">
           Login
         </div>
 
         <input
-          type="text"
+          type="email"
           name="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border-[#0016D8] border-2 rounded-2xl p-2 w-200 text-[#FFFFFF]"
+          className="border-[#0016D8] bg-transparent border-2 rounded-xl p-3 w-full text-[#FFFFFF] text-sm md:text-base focus:outline-none focus:border-[#1BE1F3]"
         />
         <input
           type="password"
@@ -77,7 +77,7 @@ export default function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border-[#0016D8] border-2 rounded-2xl p-2 w-200 text-[#FFFFFF]"
+          className="border-[#0016D8] bg-transparent border-2 rounded-xl p-3 w-full text-[#FFFFFF] text-sm md:text-base focus:outline-none focus:border-[#1BE1F3]"
         />
 
         {fetcher.data?.error && (
@@ -86,12 +86,11 @@ export default function Login() {
           </div>
         )}
 
-        <div className="flex justify-between w-full">
+        <div className="flex justify-between w-full mt-4">
           <NavLink to="/">
             <button
               type="button"
-              name="back"
-              className="border-[#D80004] border-2 rounded-xl p-2 w-25 h-10 text-[#FFFFFF] text-[12px] font-['Press_Start_2P'] uppercase hover:bg-[#D80004]"
+              className="border-[#D80004] border-2 rounded-xl px-4 py-2 md:w-28 h-10 md:h-12 text-[#FFFFFF] text-[10px] md:text-[12px] font-['Press_Start_2P'] uppercase hover:bg-[#D80004] transition-colors flex justify-center items-center"
             >
               Back
             </button>
@@ -99,9 +98,8 @@ export default function Login() {
 
           <button
             type="submit"
-            name="enter"
             disabled={!isFormValid}
-            className={`border-[#0016D8] border-2 rounded-xl p-2 w-25 h-10 text-[#FFFFFF] text-[12px] font-['Press_Start_2P'] uppercase ${
+            className={`border-[#0016D8] border-2 rounded-xl px-4 py-2 md:w-28 h-10 md:h-12 text-[#FFFFFF] text-[10px] md:text-[12px] font-['Press_Start_2P'] uppercase transition-colors flex justify-center items-center ${
               isFormValid
                 ? "hover:bg-[#0016D8] cursor-pointer"
                 : "opacity-50 cursor-not-allowed"
@@ -109,6 +107,15 @@ export default function Login() {
           >
             Enter
           </button>
+        </div>
+        
+        <div className="pt-6 w-full text-center flex flex-col gap-3">
+          <span className="text-white/70 text-[10px] md:text-[12px] font-['Press_Start_2P'] leading-tight">
+            don't have an account?
+          </span>
+          <NavLink to="/signup" className="text-[#FCFC00] text-[10px] md:text-[12px] font-['Press_Start_2P'] uppercase hover:underline hover:text-white transition-colors">
+            Create Account
+          </NavLink>
         </div>
       </fetcher.Form>
     </div>
