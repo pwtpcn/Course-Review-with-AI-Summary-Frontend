@@ -118,13 +118,13 @@ export default function AddCourse() {
 
                 {/* Course ID Field */}
                 <div className="space-y-2">
-                    <label className="text-white text-xs md:text-sm block">Course ID</label>
+                    <label className="text-white text-lg md:text-xl block font-chakra-petch">Course ID</label>
                     <input
                         type="text"
                         name="id"
                         value={id}
                         onChange={(e) => setId(e.target.value)}
-                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                        className="font-chakra-petch w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s"
                         placeholder="e.g. 01234567"
                         maxLength={10}
                     />
@@ -133,38 +133,38 @@ export default function AddCourse() {
 
                 {/* Course Name (TH) Field */}
                 <div className="space-y-2">
-                    <label className="text-white text-xs md:text-sm block">Course Name (TH)</label>
+                    <label className="text-white text-lg md:text-xl block font-chakra-petch">Course Name (TH)</label>
                     <input
                         type="text"
                         name="nameTh"
                         value={nameTh}
                         onChange={(e) => setNameTh(e.target.value)}
-                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                        className="font-chakra-petch w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s"
                     />
                     {errors.nameTh && <p className="text-red-500 text-xs">{errors.nameTh}</p>}
                 </div>
 
                 {/* Course Name (EN) Field */}
                 <div className="space-y-2">
-                    <label className="text-white text-xs md:text-sm block">Course Name (EN)</label>
+                    <label className="text-white text-lg md:text-xl block font-chakra-petch">Course Name (EN)</label>
                     <input
                         type="text"
                         name="nameEn"
                         value={nameEn}
                         onChange={(e) => setNameEn(e.target.value)}
-                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                        className="font-chakra-petch w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s"
                     />
                     {errors.nameEn && <p className="text-red-500 text-xs">{errors.nameEn}</p>}
                 </div>
 
                 {/* Description Field */}
                 <div className="space-y-2">
-                    <label className="text-white text-xs md:text-sm block">Description</label>
+                    <label className="text-white text-lg md:text-xl block font-chakra-petch">Description</label>
                     <textarea
                         name="description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="w-full h-32 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs leading-relaxed resize-none"
+                        className="font-chakra-petch w-full h-32 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s leading-relaxed resize-none"
                     />
                     {errors.description && (
                         <p className="text-red-500 text-xs">{errors.description}</p>
@@ -174,13 +174,13 @@ export default function AddCourse() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Credits Field */}
                     <div className="space-y-2">
-                        <label className="text-white text-xs md:text-sm block">Credits</label>
+                        <label className="text-white text-lg md:text-xl block font-chakra-petch">Credits</label>
                         <input
                             type="number"
                             name="credits"
                             value={credits}
                             onChange={(e) => setCredits(e.target.value ? Number(e.target.value) : "")}
-                            className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                            className="font-chakra-petch w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s"
                             min={1}
                         />
                         {errors.credits && <p className="text-red-500 text-xs">{errors.credits}</p>}
@@ -188,13 +188,13 @@ export default function AddCourse() {
 
                     {/* Year Field */}
                     <div className="space-y-2">
-                        <label className="text-white text-xs md:text-sm block">Year</label>
+                        <label className="text-white text-lg md:text-xl block font-chakra-petch">Year</label>
                         <input
                             type="number"
                             name="year"
                             value={year}
                             onChange={(e) => setYear(e.target.value ? Number(e.target.value) : "")}
-                            className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                            className="font-chakra-petch w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s"
                             min={1}
                             max={6}
                         />
@@ -204,12 +204,12 @@ export default function AddCourse() {
 
                 {/* Category Field */}
                 <div className="space-y-2">
-                    <label className="text-white text-xs md:text-sm block">Category</label>
+                    <label className="text-white text-lg md:text-xl block font-chakra-petch">Category</label>
                     <select
                         name="category"
                         value={category}
                         onChange={(e) => setCategory(e.target.value as "Core" | "Elective")}
-                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white focus:outline-none focus:border-blue-400 text-xs appearance-none"
+                        className="font-chakra-petch w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white focus:outline-none focus:border-blue-400 text-s appearance-none"
                     >
                         <option value="Core">Core</option>
                         <option value="Elective">Elective</option>
