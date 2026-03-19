@@ -144,22 +144,34 @@ export default function WriteReview() {
       <fetcher.Form method="post" className="w-full max-w-2xl space-y-8">
         {/* Content Field */}
         <div className="space-y-2">
-          <label className="text-white text-xs md:text-sm block">Content</label>
+          <label className="text-white text-s md:text-sm block">
+            Content <span className="text-red-500">*</span>
+          </label>
           <textarea
             name="content"
             value={content}
+            required
+            placeholder="อธิบายประสบการณ์เรียนวิชานี้"
+            maxLength={350}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full h-32 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs leading-relaxed resize-none"
+            className="font-chakra-petch w-full h-32 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s leading-relaxed resize-y"
           />
           {errors.content && (
             <p className="text-red-500 text-xs">{errors.content}</p>
           )}
+          <p
+            className={`text-right text-xs font-chakra-petch ${content.length >= 350 ? "text-red-500" : "text-gray-500"}`}
+          >
+            {content.length}/350
+          </p>
         </div>
 
         {/* Hard Level (Hearts) */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs md:text-sm">
-            <span className="text-white">Hard level</span>
+          <div className="flex items-center gap-2 text-s md:text-sm">
+            <span className="text-white">
+              Hard level <span className="text-red-500">*</span>
+            </span>
             <span className="text-gray-400 text-[10px]">
               ( <span className="text-red-500">♥</span> = easy )
             </span>
@@ -187,38 +199,64 @@ export default function WriteReview() {
 
         {/* How to prepare Field */}
         <div className="space-y-2">
-          <label className="text-white text-xs md:text-sm block">
-            How to prepare for test ?
+          <label className="text-white text-s md:text-sm block">
+            How to prepare for test ? <span className="text-[#A2A2A2] text-xs font-normal">(optional)</span>
           </label>
           <textarea
             name="prepare"
             value={prepare}
+            placeholder="แนะนำวิธีการเตรียมตัวสอบ"
+            maxLength={350}
             onChange={(e) => setPrepare(e.target.value)}
-            className="w-full h-24 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs leading-relaxed resize-none"
+            className="font-chakra-petch w-full h-24 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s leading-relaxed resize-y"
           />
+          <p
+            className={`text-right text-xs font-chakra-petch ${prepare.length >= 350 ? "text-red-500" : "text-gray-500"}`}
+          >
+            {prepare.length}/350
+          </p>
         </div>
 
         {/* Pros Field */}
         <div className="space-y-2">
-          <label className="text-white text-xs md:text-sm block">Pros.</label>
+          <label className="text-white text-s md:text-sm block">
+            Pros <span className="text-red-500">*</span>
+          </label>
           <textarea
             name="pros"
             value={pros}
+            required
+            placeholder="ข้อดีของวิชานี้"
+            maxLength={350}
             onChange={(e) => setPros(e.target.value)}
-            className="w-full h-24 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs leading-relaxed resize-none"
+            className="font-chakra-petch w-full h-24 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s leading-relaxed resize-y"
           />
           {errors.pros && <p className="text-red-500 text-xs">{errors.pros}</p>}
+          <p
+            className={`text-right text-xs font-chakra-petch ${pros.length >= 350 ? "text-red-500" : "text-gray-500"}`}
+          >
+            {pros.length}/350
+          </p>
         </div>
 
         {/* Cons Field */}
         <div className="space-y-2">
-          <label className="text-white text-xs md:text-sm block">Cons.</label>
+          <label className="text-white text-s md:text-sm block">
+            Cons <span className="text-[#A2A2A2] text-xs font-normal">(optional)</span>
+          </label>
           <textarea
             name="cons"
             value={cons}
+            placeholder="ข้อเสียของวิชานี้"
+            maxLength={350}
             onChange={(e) => setCons(e.target.value)}
-            className="w-full h-24 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs leading-relaxed resize-none"
+            className="font-chakra-petch w-full h-24 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s leading-relaxed resize-y"
           />
+          <p
+            className={`text-right text-xs font-chakra-petch ${cons.length >= 350 ? "text-red-500" : "text-gray-500"}`}
+          >
+            {cons.length}/350
+          </p>
         </div>
 
         <p className="text-[#FCFC00] text-[14px] pt-4">
