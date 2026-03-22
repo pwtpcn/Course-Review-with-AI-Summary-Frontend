@@ -1,7 +1,6 @@
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
-  //สร้างหน้าใหม่แล้วมาเพิ่ม route ที่นี่
   index("routes/home.tsx"),
 
   //Overall
@@ -13,7 +12,7 @@ export default [
 
   //Review
   route("/review", "routes/review/review.tsx"),
-  route("/review/subjectReview/:courseId", "routes/review/subjectreview.tsx"),
+  route("/review/subjectReview/:courseId", "routes/review/subjectReview.tsx"),
   route("/review/writeReview/:courseId", "routes/review/writereview.tsx"),
   route("/review/editReview/:reviewId", "routes/review/editReview.tsx"),
 
@@ -27,6 +26,7 @@ export default [
   route("/user/profile", "routes/user/profile.tsx"),
 
   //Admin
+  route("/admin/dashboard", "routes/admin/dashboard.tsx"),
   route("/admin/courseManage", "routes/admin/courseManage.tsx"),
   route("/admin/jobsManage", "routes/admin/jobsManage.tsx"),
   route("/admin/ManageReport", "routes/admin/ManageReport.tsx"),

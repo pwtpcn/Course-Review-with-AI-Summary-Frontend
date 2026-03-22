@@ -10,7 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import type { User } from "./routes/models/User";
-import { UserRepository } from "./routes/repositories/UserRepositories";
+import { UserRepositories } from "./routes/repositories/UserRepositories";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -63,7 +63,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     const accessToken = cookies["access_token"];
 
     if (accessToken) {
-      user = await UserRepository.getUser(accessToken);
+      user = await UserRepositories.getUser(accessToken);
     }
   }
 

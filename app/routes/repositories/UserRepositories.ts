@@ -1,6 +1,6 @@
 import type { User } from "../models/User";
 
-export class UserRepository {
+export class UserRepositories {
   static async getUser(accessToken: string): Promise<User | null> {
     const BACKEND_URL = process.env.BACKEND_URL;
     try {
@@ -55,6 +55,7 @@ export class UserRepository {
       return null;
     }
   }
+
   public async getUserById(id: string): Promise<User | null> {
     const BACKEND_URL = process.env.BACKEND_URL;
     try {
@@ -68,6 +69,23 @@ export class UserRepository {
       return data.user;
     } catch (e) {
       console.error("Failed to fetch user by id:", e);
+      return null;
+    }
+  }
+
+  public async GetAllUsers(): Promise<User[] | null> {
+    const BACKEND_URL = process.env.BACKEND_URL;
+    try {
+      const res = await fetch(`${BACKEND_URL}/user/getall`);
+      if (!res.ok) {
+        if (res.status === 404) return null;
+        throw new Error("Failed to fetch all users");
+      }
+
+      const data = await res.json();
+      return data.users;
+    } catch (e) {
+      console.error("Failed to fetch all users:", e);
       return null;
     }
   }

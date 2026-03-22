@@ -43,6 +43,7 @@ export function AdminNavBar() {
 
         {/* CENTER SECTION: Links (Desktop) */}
         <div className="hidden lg:flex flex-row items-center justify-center gap-6 xl:gap-18">
+          <NavLink to="/admin/dashboard" className={linkClasses}>Dashboard</NavLink>
           <NavLink to="/admin/reviewManage" className={linkClasses}>Review</NavLink>
           <NavLink to="/admin/courseManage" className={linkClasses} end>Course</NavLink>
           <NavLink to="/admin/jobsManage" className={linkClasses}>Jobs</NavLink>
@@ -99,6 +100,9 @@ export function AdminNavBar() {
           </div>
           
           <div className="flex flex-col gap-6">
+            <NavLink to="/admin/dashboard" className={linkClasses} onClick={() => setIsMenuOpen(false)}>
+              Dashboard
+            </NavLink>
             <NavLink to="/admin/reviewManage" className={linkClasses} onClick={() => setIsMenuOpen(false)}>
               Review
             </NavLink>

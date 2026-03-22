@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { ActionFunction } from "react-router";
 import { NavLink, useFetcher, redirect } from "react-router";
 import { supabase } from "../lib/supabase";
-import { UserRepository } from "./repositories/UserRepositories";
+import { UserRepositories } from "./repositories/UserRepositories";
 
 interface ActionMessage {
   message: string;
@@ -36,8 +36,9 @@ export const action: ActionFunction = async ({ request }) => {
     return actionMessage;
   }
 
-  const user = await UserRepository.getUser(data.session.access_token);
-  const redirectPath = user?.role === "admin" ? "/admin/reviewManage" : "/review";
+  const user = await UserRepositories.getUser(data.session.access_token);
+  const redirectPath =
+    user?.role === "admin" ? "/admin/dashboard" : "/review";
 
   return redirect(redirectPath, {
     headers: {
@@ -108,12 +109,15 @@ export default function Login() {
             Enter
           </button>
         </div>
-        
+
         <div className="pt-6 w-full text-center flex flex-col gap-3">
           <span className="text-white/70 text-[10px] md:text-[12px] font-['Press_Start_2P'] leading-tight">
             don't have an account?
           </span>
-          <NavLink to="/signup" className="text-[#FCFC00] text-[10px] md:text-[12px] font-['Press_Start_2P'] uppercase hover:underline hover:text-white transition-colors">
+          <NavLink
+            to="/signup"
+            className="text-[#FCFC00] text-[10px] md:text-[12px] font-['Press_Start_2P'] uppercase hover:underline hover:text-white transition-colors"
+          >
             Create Account
           </NavLink>
         </div>

@@ -1,7 +1,7 @@
 import type { ActionFunction } from "react-router";
 import { NavLink, useFetcher, redirect } from "react-router";
 import { supabase } from "../lib/supabase";
-import { UserRepository } from "./repositories/UserRepositories";
+import { UserRepositories } from "./repositories/UserRepositories";
 import { useState } from "react";
 
 export const action: ActionFunction = async ({ request }) => {
@@ -16,7 +16,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (!email) {
     errors.email = "Email is required";
   } else {
-    const userRepo = new UserRepository();
+    const userRepo = new UserRepositories();
     const existEmail = await userRepo.getUserByEmail(email);
     if (existEmail) {
       errors.email = "Email already used";
@@ -26,7 +26,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (!username || username.length < 3 || username.length > 20) {
     errors.username = "Username must be between 3 and 20 characters";
   } else {
-    const userRepo = new UserRepository();
+    const userRepo = new UserRepositories();
     const existUsername = await userRepo.getUserByUsername(username);
     if (existUsername) {
       errors.username = "Username already used";
@@ -90,10 +90,11 @@ export default function signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const isFormValid = email.length > 0 && 
-                      username.length > 0 && 
-                      password.length > 0 && 
-                      confirmPassword.length > 0;
+  const isFormValid =
+    email.length > 0 &&
+    username.length > 0 &&
+    password.length > 0 &&
+    confirmPassword.length > 0;
 
   return (
     <div className="bg-[#000000] h-screen flex flex-col justify-center items-center overflow-auto">
