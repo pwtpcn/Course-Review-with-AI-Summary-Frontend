@@ -24,7 +24,7 @@ export const JobsCard = ({
       >
         <div className="grid gap-4">
           <div>
-            What about the jobs :{" "}
+            Job Description :{" "}
             <span className="text-white font-chakra-petch">{job.details}</span>
           </div>
 
@@ -42,7 +42,7 @@ export const JobsCard = ({
               {jobSummary.recommendedCourses &&
                 jobSummary.recommendedCourses.length > 0 && (
                   <div className="mt-4 border-t border-[#1BE1F3]/30 pt-4">
-                    What subjects you must learned :
+                    Recommended Courses :
                     <ul className="list-disc pl-5 mt-4 space-y-4">
                       {[...jobSummary.recommendedCourses]
                         .sort((a, b) =>
@@ -71,7 +71,7 @@ export const JobsCard = ({
                 )}
             </>
           ) : (
-            <div className="text-gray-500 text-xs italic">
+            <div className="text-gray-400 text-xs italic">
               AI recommendations are not available at the moment.
             </div>
           )}
