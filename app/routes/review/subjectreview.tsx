@@ -1,5 +1,6 @@
 import { Navbar } from "~/component/Navbar";
 import { SubjectReviewList } from "~/component/SubjectReviewList";
+import ScrollToTopButton from "~/component/ScrollToTopButton";
 import {
   NavLink,
   useLoaderData,
@@ -129,6 +130,7 @@ export default function SubjectReview() {
           isOpen={showConfirm}
           onClose={() => setShowConfirm(false)}
         />
+        <ScrollToTopButton />
       </div>
     </div>
   );

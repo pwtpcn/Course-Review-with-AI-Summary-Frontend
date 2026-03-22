@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useLoaderData, Form, useFetcher } from "react-router";
+import ScrollToTopButton from "../../component/ScrollToTopButton";
 import { CourseRepositories } from "../repositories/CourseRepositories";
 import type { Course, CourseFilter } from "../models/Course";
 import { AdminNavBar } from "../../component/AdminNavBar";
@@ -225,6 +226,7 @@ export default function CourseManage() {
                     </div>
                 </div>
             </div>
+            <ScrollToTopButton />
         </div>
     );
 }

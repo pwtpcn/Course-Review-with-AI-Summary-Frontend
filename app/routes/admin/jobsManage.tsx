@@ -1,5 +1,6 @@
 import { type ActionFunctionArgs, type LoaderFunctionArgs, useLoaderData } from "react-router";
 import { JobRepositories } from "../repositories/JobRepositories";
+import ScrollToTopButton from "../../component/ScrollToTopButton";
 import type { Job } from "../models/Job";
 import { AdminNavBar } from "../../component/AdminNavBar";
 import { NavLink, useFetcher } from "react-router";
@@ -127,6 +128,7 @@ export default function JobsManage() {
                     </div>
                 </div>
             </div>
+            <ScrollToTopButton />
         </div>
     );
 }

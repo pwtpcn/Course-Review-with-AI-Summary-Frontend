@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
+import ScrollToTopButton from "../../component/ScrollToTopButton";
 import { useLoaderData, useFetcher, Form } from "react-router";
 import { ReportRepositories } from "../repositories/ReportRepositories";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
@@ -330,6 +331,7 @@ export default function ManageReport() {
                     )}
                 </div>
             </div>
+            <ScrollToTopButton />
         </div>
     );
 }

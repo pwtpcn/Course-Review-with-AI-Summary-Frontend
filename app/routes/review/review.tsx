@@ -1,4 +1,5 @@
 import { Navbar } from "~/component/Navbar";
+import ScrollToTopButton from "~/component/ScrollToTopButton";
 import { ReviewRepositories } from "../repositories/ReviewRepositories";
 import { useLoaderData } from "react-router";
 import { ReviewCard } from "~/component/ReviewCard";
@@ -31,6 +32,7 @@ export default function ReviewPage() {
             ))}
         </div>
       </div>
+      <ScrollToTopButton />
     </div>
   );
 }

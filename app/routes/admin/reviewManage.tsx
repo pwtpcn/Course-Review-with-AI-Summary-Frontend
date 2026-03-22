@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import { useLoaderData, Form, useFetcher } from "react-router";
+import ScrollToTopButton from "../../component/ScrollToTopButton";
 import { useState } from "react";
 import type { ReviewFilter } from "../models/Review";
 import type { Review } from "../models/Review";
@@ -339,6 +340,7 @@ export default function ReviewManage() {
                     )}
                 </div>
             </div>
+            <ScrollToTopButton />
         </div>
     );
 }
