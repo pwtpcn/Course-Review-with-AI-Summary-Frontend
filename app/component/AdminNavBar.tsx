@@ -13,7 +13,7 @@ export function AdminNavBar() {
 
   return (
     <nav 
-      className="w-full p-4 md:p-6 text-[10px] md:text-xs uppercase tracking-widest font-['Press_Start_2P'] relative"
+      className="w-full p-4 md:p-6 text-[10px] md:text-xs uppercase tracking-widest font-['Press_Start_2P'] sticky top-0 bg-black/95 backdrop-blur-md border-b border-[#1BE1F3]/20"
       style={{ zIndex: 100 }}
     >
       <div className="flex justify-between items-center w-full">
