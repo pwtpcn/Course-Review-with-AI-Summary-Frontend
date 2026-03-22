@@ -2,7 +2,6 @@ import type { ActionFunction, LoaderFunctionArgs } from "react-router";
 import { NavLink, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import { CourseRepositories } from "../repositories/CourseRepositories";
-import { CautionPopup } from "~/component/CautionPopup";
 import { requireAdmin, getAccessToken } from "../../lib/auth";
 import type { Course, CreateCourse } from "../models/Course";
 
@@ -70,7 +69,6 @@ export default function AddCourse() {
     const fetcher = useFetcher();
     const errors = fetcher.data?.error || {};
 
-    const [showRecheckedConfirm, setShowRecheckedConfirm] = useState(false);
     const navigate = useNavigate();
 
     const [id, setId] = useState("");
@@ -90,13 +88,12 @@ export default function AddCourse() {
         year !== "";
 
     useEffect(() => {
-        if (
-            fetcher.state === "idle" &&
-            fetcher.data?.message === "Course submitted"
-        ) {
-            navigate(`/admin/courseManage`, {
-                state: { courseSubmitted: true },
-            });
+        if (fetcher.state === "idle" && fetcher.data) {
+            if (fetcher.data.message === "Course submitted") {
+                navigate(`/admin/courseManage`, {
+                    state: { courseSubmitted: true },
+                });
+            }
         }
     }, [fetcher.state, fetcher.data, navigate]);
 
@@ -126,7 +123,7 @@ export default function AddCourse() {
                         onChange={(e) => setId(e.target.value)}
                         className="font-chakra-petch w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s"
                         placeholder="e.g. 01234567"
-                        maxLength={10}
+                        maxLength={8}
                     />
                     {errors.id && <p className="text-red-500 text-xs">{errors.id}</p>}
                 </div>
@@ -233,25 +230,18 @@ export default function AddCourse() {
                     </NavLink>
 
                     <button
-                        type="button"
-                        disabled={!isFormValid}
-                        onClick={() => setShowRecheckedConfirm(true)}
+                        type="submit"
+                        disabled={!isFormValid || fetcher.state !== "idle"}
                         className={`btn-auth-add-data text-white px-8 py-3 rounded-2xl text-xs transition-colors uppercase
-                ${isFormValid
+                ${isFormValid && fetcher.state === "idle"
                                 ? "btn-auth-add-data:hover"
                                 : "opacity-50 cursor-not-allowed"
                             }`}
                     >
-                        Add
+                        {fetcher.state !== "idle" ? "Submitting..." : "Add"}
                     </button>
                 </div>
 
-                {/* Re confirm Popup */}
-                <CautionPopup
-                    isOpen={showRecheckedConfirm}
-                    onClose={() => setShowRecheckedConfirm(false)}
-                    isSubmitting={fetcher.state !== "idle"}
-                />
             </fetcher.Form>
         </div>
     );

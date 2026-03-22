@@ -13,7 +13,8 @@ export class CourseRepositories {
         body: JSON.stringify(course),
       });
       if (!res.ok) {
-        throw new Error("Failed to create course");
+        let errorText = await res.text();
+        throw new Error(`Failed to create course. ${errorText}`);
       }
       const data = await res.json();
       return data.course;

@@ -2,9 +2,8 @@ import type { ActionFunction, LoaderFunctionArgs } from "react-router";
 import { NavLink, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import { CourseRepositories } from "../repositories/CourseRepositories";
-import { CautionPopup } from "~/component/CautionPopup";
 import { requireAdmin, getAccessToken } from "../../lib/auth";
-import type { Course, UpdateCourse } from "../models/Course";
+import type { UpdateCourse } from "../models/Course";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     await requireAdmin(request);
@@ -78,7 +77,6 @@ export default function AddCourse() {
     const fetcher = useFetcher();
     const errors = fetcher.data?.error || {};
 
-    const [showRecheckedConfirm, setShowRecheckedConfirm] = useState(false);
     const navigate = useNavigate();
 
     const [id, setId] = useState(course?.id || "");
@@ -98,13 +96,12 @@ export default function AddCourse() {
         year !== "";
 
     useEffect(() => {
-        if (
-            fetcher.state === "idle" &&
-            fetcher.data?.message === "Course submitted"
-        ) {
-            navigate(`/admin/courseManage`, {
-                state: { courseSubmitted: true },
-            });
+        if (fetcher.state === "idle" && fetcher.data) {
+            if (fetcher.data.message === "Course submitted") {
+                navigate(`/admin/courseManage`, {
+                    state: { courseSubmitted: true },
+                });
+            }
         }
     }, [fetcher.state, fetcher.data, navigate]);
 
@@ -241,25 +238,18 @@ export default function AddCourse() {
                     </NavLink>
 
                     <button
-                        type="button"
-                        disabled={!isFormValid}
-                        onClick={() => setShowRecheckedConfirm(true)}
+                        type="submit"
+                        disabled={!isFormValid || fetcher.state !== "idle"}
                         className={`btn-auth-add-data text-white px-8 py-3 rounded-2xl text-xs transition-colors uppercase
-                ${isFormValid
+                ${isFormValid && fetcher.state === "idle"
                                 ? "btn-auth-add-data:hover"
                                 : "opacity-50 cursor-not-allowed"
                             }`}
                     >
-                        Save
+                        {fetcher.state !== "idle" ? "Submitting..." : "Save"}
                     </button>
                 </div>
 
-                {/* Re confirm Popup */}
-                <CautionPopup
-                    isOpen={showRecheckedConfirm}
-                    onClose={() => setShowRecheckedConfirm(false)}
-                    isSubmitting={fetcher.state !== "idle"}
-                />
             </fetcher.Form>
         </div>
     );

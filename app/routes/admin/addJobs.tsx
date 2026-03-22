@@ -2,7 +2,6 @@ import type { ActionFunction, LoaderFunctionArgs } from "react-router";
 import { NavLink, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import { JobRepositories } from "../repositories/JobRepositories";
-import { CautionPopup } from "~/component/CautionPopup";
 import { requireAdmin, getAccessToken } from "../../lib/auth";
 import type { CreateJob } from "../models/Job";
 
@@ -54,7 +53,6 @@ export default function AddJob() {
     const fetcher = useFetcher();
     const errors = fetcher.data?.error || {};
 
-    const [showRecheckedConfirm, setShowRecheckedConfirm] = useState(false);
     const navigate = useNavigate();
 
     const [name, setName] = useState("");
@@ -65,13 +63,12 @@ export default function AddJob() {
         details.length > 0;
 
     useEffect(() => {
-        if (
-            fetcher.state === "idle" &&
-            fetcher.data?.message === "Job submitted"
-        ) {
-            navigate(`/admin/jobManage`, {
-                state: { jobSubmitted: true },
-            });
+        if (fetcher.state === "idle" && fetcher.data) {
+            if (fetcher.data.message === "Job submitted") {
+                navigate(`/admin/jobsManage`, {
+                    state: { jobSubmitted: true },
+                });
+            }
         }
     }, [fetcher.state, fetcher.data, navigate]);
 
@@ -93,25 +90,25 @@ export default function AddJob() {
 
                 {/* Job Name Field */}
                 <div className="space-y-2">
-                    <label className="text-white text-xs md:text-sm block">Job Name</label>
+                    <label className="text-white text-lg md:text-xl block font-chakra-petch">Job Name</label>
                     <input
                         type="text"
                         name="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs"
+                        className="font-chakra-petch w-full bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s"
                     />
                     {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
                 </div>
 
                 {/* Details Field */}
                 <div className="space-y-2">
-                    <label className="text-white text-xs md:text-sm block">Details</label>
+                    <label className="text-white text-lg md:text-xl block font-chakra-petch">Details</label>
                     <textarea
                         name="details"
                         value={details}
                         onChange={(e) => setDetails(e.target.value)}
-                        className="w-full h-32 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-xs leading-relaxed resize-none"
+                        className="font-chakra-petch w-full h-32 bg-black border-2 border-[#0016D8] rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 text-s leading-relaxed resize-none"
                     />
                     {errors.details && (
                         <p className="text-[#D80004] text-xs">{errors.details}</p>
@@ -134,25 +131,18 @@ export default function AddJob() {
                     </NavLink>
 
                     <button
-                        type="button"
-                        disabled={!isFormValid}
-                        onClick={() => setShowRecheckedConfirm(true)}
+                        type="submit"
+                        disabled={!isFormValid || fetcher.state !== "idle"}
                         className={`btn-auth-add-data text-white px-8 py-3 rounded-2xl text-xs transition-colors uppercase
-                ${isFormValid
+                ${isFormValid && fetcher.state === "idle"
                                 ? "btn-auth-add-data:hover"
                                 : "opacity-50 cursor-not-allowed"
                             }`}
                     >
-                        Add
+                        {fetcher.state !== "idle" ? "Submitting..." : "Add"}
                     </button>
                 </div>
 
-                {/* Re confirm Popup */}
-                <CautionPopup
-                    isOpen={showRecheckedConfirm}
-                    onClose={() => setShowRecheckedConfirm(false)}
-                    isSubmitting={fetcher.state !== "idle"}
-                />
             </fetcher.Form>
         </div>
     );
