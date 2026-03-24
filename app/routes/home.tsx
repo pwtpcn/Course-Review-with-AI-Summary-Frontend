@@ -57,7 +57,7 @@ export default function Home() {
           </h1>
 
           <p className="text-[#FCFC00] text-xs sm:text-lg md:text-2xl tracking-wider px-2">
-            Welcome to Comsci Subject review community
+            Welcome to Comsci Courses Review Community
           </p>
 
         </div>
