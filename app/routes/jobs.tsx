@@ -1,7 +1,7 @@
 import { Navbar } from "~/component/Navbar";
 import ScrollToTopButton from "~/component/ScrollToTopButton";
-import { Await, useLoaderData } from "react-router";
-import { Suspense, useState } from "react";
+import { useLoaderData } from "react-router";
+import { useState, useEffect, useRef } from "react";
 import { JobsSearchBar } from "~/component/JobsSearchBar";
 import { JobRepositories } from "./repositories/JobRepositories";
 import { AIRepositories } from "./repositories/AIRepositories";
@@ -11,29 +11,40 @@ import type { Job, JobSummary } from "./models/Job";
 
 export const loader = async () => {
   const jobRepositories = new JobRepositories();
-  const aiRepositories = new AIRepositories();
   const jobs = await jobRepositories.GetAllJobs();
-
-  const deferredData: Record<string, any> = { jobs: jobs || [] };
-
-  if (jobs) {
-    jobs.forEach((job) => {
-  // Map each job summary promise individually to allow independent streaming
-      deferredData[`summary_${job.id}`] = aiRepositories
-        .GetAIJobSummary(job.id)
-        .catch((e: Error) => {
-          console.error(`Failed to load summary for job ${job.id}`, e);
-          return null;
-        });
-    });
-  }
-
-  return deferredData;
+  return { jobs: jobs || [] };
 };
 
+// Fetches AI summary on the client side to avoid server timeout
+function JobCardWithSummary({ job }: { job: Job }) {
+  const [jobSummary, setJobSummary] = useState<JobSummary | null | undefined>(
+    undefined,
+  );
+  const fetchedRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (fetchedRef.current === job.id) return;
+    fetchedRef.current = job.id;
+
+    const aiRepository = new AIRepositories();
+    aiRepository
+      .GetAIJobSummary(job.id)
+      .then((summary) => setJobSummary(summary))
+      .catch((error) => {
+        console.error(`Failed to fetch AI summary for job ${job.id}:`, error);
+        setJobSummary(null);
+      });
+  }, [job.id]);
+
+  if (jobSummary === undefined) {
+    return <JobSkeletonCard job={job} />;
+  }
+
+  return <JobsCard job={job} jobSummary={jobSummary} />;
+}
+
 export default function JobPage() {
-  const data = useLoaderData<typeof loader>();
-  const jobs = data.jobs as Job[];
+  const { jobs } = useLoaderData<typeof loader>();
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filter jobs based on search term
@@ -57,13 +68,7 @@ export default function JobPage() {
         <div className="w-full pb-20 flex flex-col gap-6">
           {filteredJobs.length > 0 ? (
             filteredJobs.map((job: Job) => (
-              <Suspense key={job.id} fallback={<JobSkeletonCard job={job} />}>
-                <Await resolve={(data as any)[`summary_${job.id}`]}>
-                  {(resolvedSummary: JobSummary | null) => (
-                    <JobsCard job={job} jobSummary={resolvedSummary} />
-                  )}
-                </Await>
-              </Suspense>
+              <JobCardWithSummary key={job.id} job={job} />
             ))
           ) : (
             <div className="w-full max-w-4xl mx-auto text-center border-2 border-[#1BE1F3]/50 bg-[#1BE1F3]/5 rounded-2xl p-12 mt-8">
