@@ -32,7 +32,13 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (error) {
     console.error("Login error:", error.message);
-    actionMessage.error = error.message;
+    if (error.message.includes("Email not confirmed")) {
+      actionMessage.error = "กรุณายืนยันอีเมลในกล่องข้อความก่อนเข้าสู่ระบบ";
+    } else if (error.message.includes("Invalid login credentials")) {
+      actionMessage.error = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+    } else {
+      actionMessage.error = error.message;
+    }
     return actionMessage;
   }
 
@@ -82,7 +88,7 @@ export default function Login() {
         />
 
         {fetcher.data?.error && (
-          <div className="text-red-500 text-xs font-['Press_Start_2P']">
+          <div className="text-red-500 text-xs font-chakra-petch">
             {fetcher.data.error}
           </div>
         )}
@@ -111,7 +117,14 @@ export default function Login() {
         </div>
 
         <div className="pt-6 w-full text-center flex flex-col gap-3">
-          <span className="text-white/70 text-[10px] md:text-[12px] font-['Press_Start_2P'] leading-tight">
+          <NavLink
+            to="/forgot-password"
+            className="text-[#1BE1F3] text-[9px] md:text-[10px] font-['Press_Start_2P'] uppercase hover:underline transition-colors"
+          >
+            Forgot Password?
+          </NavLink>
+
+          <span className="text-white/70 text-[10px] md:text-[12px] font-['Press_Start_2P'] leading-tight mt-2">
             don't have an account?
           </span>
           <NavLink

@@ -5,6 +5,9 @@ export default [
 
   //Overall
   route("/login", "routes/login.tsx"),
+  route("/verify-email", "routes/verify-email.tsx"),
+  route("/forgot-password", "routes/forgot-password.tsx"),
+  route("/update-password", "routes/update-password.tsx"),
   route("/signup", "routes/signup.tsx"),
   route("/jobs", "routes/jobs.tsx"),
   route("/logout", "routes/logout.tsx"),

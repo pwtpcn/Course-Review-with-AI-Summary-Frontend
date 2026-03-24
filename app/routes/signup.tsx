@@ -72,13 +72,15 @@ export const action: ActionFunction = async ({ request }) => {
       data: {
         username: username as string,
       },
+      emailRedirectTo: "http://localhost:5173/login",
     },
   });
 
-  console.log("Create New User: ", data);
-  console.log("Error: ", error);
-
-  return redirect("/login");
+  if (error) {
+    console.log("Error: ", error);
+  } 
+  
+  return redirect("/verify-email");
 };
 
 export default function signup() {
@@ -100,7 +102,7 @@ export default function signup() {
     <div className="bg-[#000000] h-screen flex flex-col justify-center items-center overflow-auto">
       <fetcher.Form
         method="post"
-        className="flex flex-col justify-center items-center w-full max-w-[90%] sm:max-w-[400px] h-fit space-y-4 md:space-y-6 py-10 md:p-10 rounded-2xl flex-shrink-0"
+        className="flex flex-col justify-center items-center w-full max-w-[90%] sm:max-w-[400px] h-fit space-y-4 md:space-y-6 py-10 md:p-10 rounded-2xl shrink-0"
       >
         <div className="text-[#FCFC00] text-[28px] sm:text-[32px] md:text-[40px] font-['Press_Start_2P'] uppercase text-center mb-6 leading-tight">
           Sign up
