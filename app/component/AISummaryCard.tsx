@@ -6,6 +6,7 @@ interface AISummaryCardProps {
 }
 
 export function AISummaryCard({ aiSummary, rating }: AISummaryCardProps) {
+  console.log("AI Summary : ", aiSummary);
   return (
     <>
       <div className="w-full">
@@ -47,6 +48,12 @@ export function AISummaryCard({ aiSummary, rating }: AISummaryCardProps) {
                   {aiSummary.cons?.length ? aiSummary.cons.join(", ") : "-"}
                 </span>
               </div>
+              {aiSummary.note && (
+                <div>
+                  <span className="font-['Press_Start_2P']">Note :</span>{" "}
+                  <span className="text-white">{aiSummary.note}</span>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center space-y-6 py-6 text-center">

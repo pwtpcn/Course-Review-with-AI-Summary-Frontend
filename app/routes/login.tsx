@@ -33,9 +33,9 @@ export const action: ActionFunction = async ({ request }) => {
   if (error) {
     console.error("Login error:", error.message);
     if (error.message.includes("Email not confirmed")) {
-      actionMessage.error = "กรุณายืนยันอีเมลในกล่องข้อความก่อนเข้าสู่ระบบ";
+      actionMessage.error = "Please confirm your email in the inbox first";
     } else if (error.message.includes("Invalid login credentials")) {
-      actionMessage.error = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+      actionMessage.error = "Invalid email or password";
     } else {
       actionMessage.error = error.message;
     }
@@ -88,7 +88,7 @@ export default function Login() {
         />
 
         {fetcher.data?.error && (
-          <div className="text-red-500 text-xs font-chakra-petch">
+          <div className="text-red-500 text-md font-chakra-petch">
             {fetcher.data.error}
           </div>
         )}

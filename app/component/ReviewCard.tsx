@@ -74,7 +74,7 @@ export const ReviewCard = ({
 
   const handleToggleReaction = (type: "like" | "dislike") => {
     if (!user) {
-      alert("กรุณาเข้าสู่ระบบก่อนทำการถูกใจหรือเลิกถูกใจรีวิว");
+      alert("กรุณาเข้าสู่ระบบก่อนทำการถูกใจหรือไม่ถูกใจรีวิว");
       return;
     }
 

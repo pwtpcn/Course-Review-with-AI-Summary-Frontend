@@ -37,8 +37,8 @@ export interface ReviewSummary {
   content: string;
   pros: string[];
   cons?: string[];
-  rating: number;
   testPrepare?: string[];
+  note?: string;
 }
 
 export interface ReviewFilter {
