@@ -12,6 +12,11 @@ import "./app.css";
 import type { User } from "./routes/models/User";
 import { UserRepositories } from "./routes/repositories/UserRepositories";
 
+export const meta: Route.MetaFunction = () => [
+  { title: "CS Course Review" },
+  { name: "description", content: "CS Course Review" },
+];
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -49,7 +54,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export async function loader({ request }: Route.LoaderArgs) {
   const cookieHeader = request.headers.get("Cookie");
-  // console.log("Cookie Header:", cookieHeader);
   let user: User | null = null;
 
   if (cookieHeader) {
@@ -59,7 +63,6 @@ export async function loader({ request }: Route.LoaderArgs) {
         return [key, v.join("=")];
       }),
     );
-    // console.log("Cookies:", cookies);
     const accessToken = cookies["access_token"];
 
     if (accessToken) {

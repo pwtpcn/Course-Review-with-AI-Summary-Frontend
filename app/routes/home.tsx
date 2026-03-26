@@ -3,7 +3,7 @@ import type { Route } from "./+types/home";
 
 export function meta({ }: Route.MetaArgs) {
   return [
-    { title: "Course Review" },
+    { title: "CS Course Review" },
     { name: "description", content: "Welcome to Course Review!" },
   ];
 }
