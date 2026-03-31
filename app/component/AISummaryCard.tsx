@@ -1,4 +1,5 @@
 import type { ReviewSummary } from "~/routes/models/Review";
+import { ratingLabels } from "~/routes/models/Rating-lable";
 
 interface AISummaryCardProps {
   aiSummary?: ReviewSummary | null;
@@ -24,7 +25,9 @@ export function AISummaryCard({ aiSummary, rating }: AISummaryCardProps) {
               </div>
               <div>
                 <span className="font-['Press_Start_2P']">Hard Level :</span>{" "}
-                <span className="text-white">{rating.toFixed(1)}</span>
+                <span className="text-white">
+                  {rating.toFixed(1)} ({ratingLabels[Math.round(rating)] || "-"})
+                </span>
               </div>
               <div>
                 <span className="font-['Press_Start_2P']">

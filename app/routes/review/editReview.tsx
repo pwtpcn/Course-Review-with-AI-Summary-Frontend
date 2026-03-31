@@ -8,6 +8,7 @@ import { ReviewRepositories } from "../repositories/ReviewRepositories";
 import { requireUser, getAccessToken } from "../../lib/auth";
 import type { UpdateReview } from "../models/Review";
 import { CautionPopup } from "~/component/CautionPopup";
+import { ratingLabels } from "../models/Rating-lable";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
@@ -157,14 +158,6 @@ export default function EditReview() {
   const [cons, setCons] = useState(
     review.cons && review.cons !== "-" ? review.cons : "",
   );
-
-  const ratingLabels: Record<number, string> = {
-    1: "easy",
-    2: "quite easy",
-    3: "medium",
-    4: "quite hard",
-    5: "hard",
-  };
 
   const isFormValid = content.length > 0 && pros.length > 0 && rating > 0;
 
