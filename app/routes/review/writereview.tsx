@@ -116,6 +116,14 @@ export default function WriteReview() {
   const [prepare, setPrepare] = useState("");
   const [cons, setCons] = useState("");
 
+  const ratingLabels: Record<number, string> = {
+    1: "easy",
+    2: "quite easy",
+    3: "medium",
+    4: "quite hard",
+    5: "hard",
+  };
+
   const isFormValid = content.length > 0 && pros.length > 0 && rating > 0;
 
   useEffect(() => {
@@ -173,7 +181,7 @@ export default function WriteReview() {
               Hard level <span className="text-red-500">*</span>
             </span>
             <span className="text-gray-400 text-[10px]">
-              ( <span className="text-red-500">♥</span> = easy )
+              ( <span className="text-red-500">♥</span> = {rating > 0 ? ratingLabels[rating] : "easy"} )
             </span>
           </div>
           <div className="flex gap-2">
