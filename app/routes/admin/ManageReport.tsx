@@ -321,7 +321,7 @@ export default function ManageReport() {
                                                 value="accept_report"
                                                 className="px-6 py-2 text-[10px] uppercase rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors"
                                             >
-                                                Hide Review (Accept Report)
+                                                Hide Review (Approve Report)
                                             </button>
                                         </fetcher.Form>
                                     </div>
