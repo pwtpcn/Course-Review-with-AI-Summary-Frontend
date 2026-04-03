@@ -64,6 +64,9 @@ export default function JobPage() {
         {/* Search Bar */}
         <JobsSearchBar onSearch={setSearchTerm} />
 
+        <div className="w-full max-w-4xl mx-auto text-left mb-5 mt-2">
+          <h2 className="text-[#FCFC00] text-sm md:text-base">Jobs recommended by Admin</h2>
+        </div>
         {/* Job List */}
         <div className="w-full pb-20 flex flex-col gap-6">
           {filteredJobs.length > 0 ? (

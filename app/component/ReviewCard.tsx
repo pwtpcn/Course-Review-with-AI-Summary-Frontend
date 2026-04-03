@@ -10,7 +10,7 @@ export const ReviewCard = ({
   showManageActions = false,
   hideHeader = false,
   containerClassName = "w-full max-w-4xl mx-auto mb-8",
-  cardClassName = "border-2 border-[#1BE1F3] p-6 bg-black text-[#FCFC00] min-h-[200px] text-xs md:text-sm lg:text-md leading-loose",
+  cardClassName = "border-2 rounded-lg border-[#1BE1F3] p-6 bg-black text-[#FCFC00] min-h-[200px] text-xs md:text-sm lg:text-md leading-loose",
 }: {
   data: Review;
   showManageActions?: boolean;
