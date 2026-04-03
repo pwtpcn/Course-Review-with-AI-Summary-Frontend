@@ -8,9 +8,15 @@ import { ThumbsDown, ThumbsUp } from "lucide-react";
 export const ReviewCard = ({
   data,
   showManageActions = false,
+  hideHeader = false,
+  containerClassName = "w-full max-w-4xl mx-auto mb-8",
+  cardClassName = "border-2 border-[#1BE1F3] p-6 bg-black text-[#FCFC00] min-h-[200px] text-xs md:text-sm lg:text-md leading-loose",
 }: {
   data: Review;
   showManageActions?: boolean;
+  hideHeader?: boolean;
+  containerClassName?: string;
+  cardClassName?: string;
 }) => {
   const [isReportPopupOpen, setIsReportPopupOpen] = useState(false);
   const fetcher = useFetcher();
@@ -88,20 +94,19 @@ export const ReviewCard = ({
     });
   };
 
-  const borderColor = "border-[#1BE1F3]";
   const headerBg = "bg-[#1BE1F3]";
   const textColor = "text-black";
 
   return (
-    <div className="w-full max-w-4xl mx-auto mb-8 ">
-      <div
-        className={`${headerBg} ${textColor} px-4 py-2 text-xs md:text-sm lg:text-md inline-block`}
-      >
-        {data.course?.id} | {data.course?.nameEn}
-      </div>
-      <div
-        className={`border-2 ${borderColor} p-6 bg-black text-[#FCFC00] min-h-[200px] text-xs md:text-sm lg:text-md leading-loose`}
-      >
+    <div className={containerClassName}>
+      {!hideHeader && (
+        <div
+          className={`${headerBg} ${textColor} px-4 py-2 text-xs md:text-sm lg:text-md inline-block`}
+        >
+          {data.course?.id} | {data.course?.nameEn}
+        </div>
+      )}
+      <div className={cardClassName}>
         <div className="grid gap-4">
           <div>
             Content :

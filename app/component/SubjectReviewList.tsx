@@ -1,4 +1,5 @@
 import type { Review } from "../routes/models/Review";
+import { ReviewCard } from "./ReviewCard";
 
 interface SubjectReviewListProps {
   reviews: Review[];
@@ -12,31 +13,13 @@ export const SubjectReviewList = ({ reviews }: SubjectReviewListProps) => {
       </h2>
 
       {reviews.map((review) => (
-        <div
+        <ReviewCard
           key={review.id}
-          className="w-full border-2 border-[#1BE1F3] p-6 text-[#FCFC00] text-xs md:text-sm lg:text-md leading-loose mb-6"
-        >
-          <div className="grid gap-4">
-            <div>
-              Content : <span className="text-white font-chakra-petch">{review.content}</span>
-            </div>
-            <div>
-              Hard level : <span className="text-white font-chakra-petch">{review.rating}</span>
-            </div>
-            <div>
-              How to prepare for test ? :{" "}
-              <span className="text-white font-chakra-petch">{review.testPrepare}</span>
-            </div>
-            <div>
-              Pros. : <span className="text-white font-chakra-petch">{review.pros}</span>
-            </div>
-            {review.cons && (
-              <div>
-                Cons. : <span className="text-white font-chakra-petch">{review.cons}</span>
-              </div>
-            )}
-          </div>
-        </div>
+          data={review}
+          hideHeader={true}
+          containerClassName="w-full mb-6"
+          cardClassName="w-full border-2 border-[#1BE1F3] p-6 bg-black text-[#FCFC00] text-xs md:text-sm lg:text-md leading-loose"
+        />
       ))}
     </div>
   );
