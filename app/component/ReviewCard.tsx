@@ -130,6 +130,16 @@ export const ReviewCard = ({
             Cons. :
             <span className="text-white font-chakra-petch">{data.cons}</span>
           </div>
+          <div>
+            <span className="text-white font-chakra-petch">
+              เขียนเมื่อวันที่ : {" "}
+              {new Date(data.createdAt).toLocaleDateString("th-TH", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          </div>
         </div>
 
         <div className="mt-6 flex justify-end items-center">
